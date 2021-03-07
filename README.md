@@ -1,2 +1,2 @@
 # DataAnnotatedModelValidations
-Data Annotated Model Middleware for HotChocolate
+Data Annotated Model Validation Middleware for HotChocolate
