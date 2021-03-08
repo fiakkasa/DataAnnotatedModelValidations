@@ -1,5 +1,4 @@
 ﻿using HotChocolate;
-using HotChocolate.Execution;
 using HotChocolate.Resolvers;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -62,8 +61,8 @@ namespace DataAnnotatedModelValidations
                             );
                         });
 
-                if (validationResults.Any())
-                    throw new QueryException(validationResults);
+                foreach (var item in validationResults)
+                    context.ReportError(item);
             }
 
             await _next(context).ConfigureAwait(false);
