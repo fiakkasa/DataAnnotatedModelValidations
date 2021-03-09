@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace DataAnnotatedModelValidations
@@ -34,8 +35,14 @@ namespace DataAnnotatedModelValidations
                 .AsParallel()
                 .ForAll(argument =>
                 {
-                    if (argument is not { } || context.ArgumentValue<object>(argument.Name) is not { } obj)
+                    if (
+                        argument is not { }
+                        || context.ArgumentValue<object>(argument.Name) is not { } obj
+                        || obj.GetType().GetCustomAttribute(typeof(IgnoreModelValidationAttribute)) is { }
+                    )
+                    {
                         return;
+                    }
 
                     var validationResults = new List<ValidationResult>();
 

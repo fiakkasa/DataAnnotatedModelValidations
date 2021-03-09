@@ -30,6 +30,8 @@ namespace DataAnnotatedModelValidations.Tests
 
             public Sample GetSampleNonNull(Sample sample) => sample;
 
+            public Sample? GetSampleIgnoreValidation([IgnoreModelValidation] Sample? sample) => sample;
+
             public Sample? GetSampleWithService(Sample? sample, [Service] MockService service) =>
                 service.Get(sample?.Email);
         }
@@ -43,6 +45,7 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sample(sample: { email: \"a@b.com\" }) { email } }", null)]
         [InlineData("{ sampleNonNull(sample: null) { email } }", 1)]
         [InlineData("{ sampleNonNull(sample: { email: \"ab\" }) { email } }", 2)]
+        [InlineData("{ sampleIgnoreValidation(sample: null) { email } }", null)]
         [InlineData("{ sampleWithService(sample: { email: \"abc\" }) { email } }", 1)]
         [InlineData("{ sampleWithService(sample: { email: \"a@b.com\" }) { email } }", null)]
         public async Task InvokeAsyncShouldContainErrors(string query, int? numberOfErrors)
