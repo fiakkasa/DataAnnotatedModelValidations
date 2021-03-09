@@ -1,6 +1,4 @@
-﻿using HotChocolate.Execution.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace DataAnnotatedModelValidations.Tests
@@ -10,13 +8,12 @@ namespace DataAnnotatedModelValidations.Tests
         [Fact]
         public void AddDataAnnotationsValidator()
         {
-            var serviceCollection = new ServiceCollection();
-            var mockRequestExecutorBuilder = new Mock<IRequestExecutorBuilder>();
-            mockRequestExecutorBuilder.SetupGet(p => p.Services).Returns(serviceCollection);
+            var requestExecutorBuilder = new ServiceCollection().AddGraphQL();
+            var count = requestExecutorBuilder.Services.Count;
 
-            mockRequestExecutorBuilder.Object.AddDataAnnotationsValidator();
+            requestExecutorBuilder.AddDataAnnotationsValidator();
 
-            Assert.True(serviceCollection.Count > 0);
+            Assert.Equal(count + 1, requestExecutorBuilder.Services.Count);
         }
     }
 }

@@ -24,32 +24,39 @@ namespace DataAnnotatedModelValidations
             if (arguments.Count == 0) return;
 
             var textInfo = CultureInfo.CurrentCulture.TextInfo;
-            var contextPath = context.Path.ToList().Select(node => new NameString($"{node}")).ToList();
+            var contextPath =
+                context.Path
+                    .ToList()
+                    .Select(node => new NameString($"{node}"))
+                    .ToList();
 
-            var errors = new List<ValidationResult>();
-            var validationResults =
-                arguments
-                    .SelectMany(argument =>
+            arguments
+                .AsParallel()
+                .ForAll(argument =>
+                {
+                    if (argument is not { } || context.ArgumentValue<object>(argument.Name) is not { } obj)
+                        return;
+
+                    var validationResults = new List<ValidationResult>();
+
+                    Validator.TryValidateObject(obj, new ValidationContext(obj), validationResults, true);
+
+                    foreach (var validationResult in validationResults)
                     {
-                        errors.Clear();
-
-                        if (argument is not { } || context.ArgumentValue<object>(argument.Name) is not { } obj)
-                            return Enumerable.Empty<IError>();
-
-                        Validator.TryValidateObject(obj, new ValidationContext(obj), errors, true);
-
-                        return errors.Select(validationResult =>
+                        context.ReportError(
                             ErrorBuilder.New()
                                 .SetMessage($"{validationResult.ErrorMessage}")
+                                .SetCode("400")
                                 .SetPath(
                                     contextPath
                                         .Skip(1)
                                         .Concat(
-                                            validationResult.MemberNames.FirstOrDefault() is string propertyName && propertyName.Length > 0
+                                            validationResult.MemberNames.FirstOrDefault() is string propertyName
+                                            && propertyName.Length > 0
                                                 ? new[]
                                                 {
-                                                        new NameString(argument.Name),
-                                                        new NameString($"{char.ToLowerInvariant(propertyName[0])}{textInfo.ToTitleCase(propertyName)[1..]}")
+                                                    new NameString(argument.Name),
+                                                    new NameString($"{char.ToLowerInvariant(propertyName[0])}{textInfo.ToTitleCase(propertyName)[1..]}")
                                                 }
                                                 : new[] { new NameString(argument.Name) }
                                         )
@@ -59,10 +66,11 @@ namespace DataAnnotatedModelValidations
                                 .SetExtension("type", argument.Coordinate.TypeName)
                                 .Build()
                         );
-                    });
+                    }
 
-            foreach (var item in validationResults)
-                context.ReportError(item);
+                    validationResults.Clear();
+                    validationResults = default;
+                });
         }
 
         public async Task InvokeAsync(IMiddlewareContext context)
