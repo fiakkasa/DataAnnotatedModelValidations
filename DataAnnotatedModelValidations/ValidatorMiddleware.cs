@@ -54,21 +54,7 @@ namespace DataAnnotatedModelValidations
                             ErrorBuilder.New()
                                 .SetMessage($"{validationResult.ErrorMessage}")
                                 .SetCode("400")
-                                .SetPath(
-                                    contextPath
-                                        .Skip(1)
-                                        .Concat(
-                                            validationResult.MemberNames.FirstOrDefault() is string propertyName
-                                            && propertyName.Length > 0
-                                                ? new[]
-                                                {
-                                                    new NameString(argument.Name),
-                                                    new NameString($"{char.ToLowerInvariant(propertyName[0])}{textInfo.ToTitleCase(propertyName)[1..]}")
-                                                }
-                                                : new[] { new NameString(argument.Name) }
-                                        )
-                                        .Aggregate(Path.New(contextPath[0]), (path, segment) => path.Append(segment))
-                                )
+                                .SetPath(GetPath(argument.Name, textInfo, contextPath, validationResult))
                                 .SetExtension("field", argument.Coordinate.FieldName)
                                 .SetExtension("type", argument.Coordinate.TypeName)
                                 .Build()
@@ -78,6 +64,21 @@ namespace DataAnnotatedModelValidations
                     validationResults.Clear();
                     validationResults = default;
                 });
+
+            static NamePathSegment GetPath(NameString name, TextInfo textInfo, List<NameString> contextPath, ValidationResult validationResult) =>
+                contextPath
+                    .Skip(1)
+                    .Concat(
+                        validationResult.MemberNames.FirstOrDefault() is string propertyName
+                        && propertyName.Length > 0
+                            ? new[]
+                            {
+                                name,
+                                new NameString($"{char.ToLowerInvariant(propertyName[0])}{textInfo.ToTitleCase(propertyName)[1..]}")
+                            }
+                            : new[] { name }
+                    )
+                    .Aggregate(Path.New(contextPath[0]), (path, segment) => path.Append(segment));
         }
 
         public async Task InvokeAsync(IMiddlewareContext context)
