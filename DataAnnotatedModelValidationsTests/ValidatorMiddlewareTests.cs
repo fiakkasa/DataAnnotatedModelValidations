@@ -40,9 +40,9 @@ namespace DataAnnotatedModelValidations.Tests
 
         public class Query
         {
-            public string? GetText([Required] string? text) => text;
+            public string? GetText([MinLength(5)] string? text) => text;
 
-            public string? GetTextIgnoreValidation([IgnoreModelValidation][Required] string? text) => text;
+            public string? GetTextIgnoreValidation([IgnoreModelValidation][MinLength(5)] string? text) => text;
 
             public Sample? GetSample(Sample? sample) => sample;
 
@@ -56,8 +56,8 @@ namespace DataAnnotatedModelValidations.Tests
 
         [Theory]
         [InlineData("{ text(text: null) }", 1)]
-        [InlineData("{ text(text: \"\") }", null)]
-        [InlineData("{ textIgnoreValidation(text: null) }", 1)]
+        [InlineData("{ text(text: \"abcdefg\") }", null)]
+        [InlineData("{ textIgnoreValidation(text: \"a\") }", null)]
         [InlineData("{ sample(sample: null) { email } }", null)]
         [InlineData("{ sample(sample: { email: null }) { email } }", 1)]
         [InlineData("{ sample(sample: { email: \"\" }) { email } }", 1)]
