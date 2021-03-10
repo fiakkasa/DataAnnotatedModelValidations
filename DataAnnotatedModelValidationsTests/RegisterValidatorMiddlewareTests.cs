@@ -13,7 +13,8 @@ namespace DataAnnotatedModelValidations.Tests
 
             requestExecutorBuilder.AddDataAnnotationsValidator();
 
-            Assert.Equal(count + 1, requestExecutorBuilder.Services.Count);
+            // Interceptor + Validator + Previous
+            Assert.Equal(count + 2, requestExecutorBuilder.Services.Count);
         }
     }
 }

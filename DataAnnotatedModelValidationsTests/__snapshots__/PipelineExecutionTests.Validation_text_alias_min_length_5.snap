@@ -1,0 +1,19 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field String must be a string or array type with a minimum length of \u00275\u0027.",
+      "path": [
+        "textAlias",
+        "txt"
+      ],
+      "extensions": {
+        "code": "DAMV400",
+        "field": "text",
+        "type": "Query"
+      }
+    }
+  ],
+  "data": {
+    "textAlias": null
+  }
+}

@@ -1,0 +1,19 @@
+﻿{
+  "errors": [
+    {
+      "message": "The argument \u0060obj\u0060 is required.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 17
+        }
+      ],
+      "extensions": {
+        "type": "Query",
+        "field": "sampleNonNull",
+        "argument": "obj",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Required-Arguments"
+      }
+    }
+  ]
+}

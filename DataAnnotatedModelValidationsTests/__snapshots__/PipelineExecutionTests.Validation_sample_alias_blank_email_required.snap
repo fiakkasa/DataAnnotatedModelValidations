@@ -1,0 +1,20 @@
+﻿{
+  "errors": [
+    {
+      "message": "The Email field is required.",
+      "path": [
+        "sampleAlias",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV400",
+        "field": "sample",
+        "type": "Query"
+      }
+    }
+  ],
+  "data": {
+    "sampleAlias": null
+  }
+}

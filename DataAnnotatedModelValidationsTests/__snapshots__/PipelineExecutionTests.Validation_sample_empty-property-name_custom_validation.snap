@@ -1,0 +1,19 @@
+﻿{
+  "errors": [
+    {
+      "message": "empty-property-name",
+      "path": [
+        "sample",
+        "obj"
+      ],
+      "extensions": {
+        "code": "DAMV400",
+        "field": "sample",
+        "type": "Query"
+      }
+    }
+  ],
+  "data": {
+    "sample": null
+  }
+}

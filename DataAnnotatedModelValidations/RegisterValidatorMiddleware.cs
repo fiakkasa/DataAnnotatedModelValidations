@@ -6,6 +6,8 @@ namespace DataAnnotatedModelValidations
     public static class RegisterValidatorMiddleware
     {
         public static IRequestExecutorBuilder AddDataAnnotationsValidator(this IRequestExecutorBuilder requestExecutorBuilder) =>
-            requestExecutorBuilder.UseField<ValidatorMiddleware>();
+            requestExecutorBuilder
+                .TryAddTypeInterceptor<ValidatorTypeInterceptor>()
+                .UseField<ValidatorMiddleware>();
     }
 }

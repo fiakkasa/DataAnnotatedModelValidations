@@ -1,0 +1,20 @@
+﻿{
+  "errors": [
+    {
+      "message": "The Email field is not a valid e-mail address.",
+      "path": [
+        "sampleWithService",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV400",
+        "field": "sampleWithService",
+        "type": "Query"
+      }
+    }
+  ],
+  "data": {
+    "sampleWithService": null
+  }
+}

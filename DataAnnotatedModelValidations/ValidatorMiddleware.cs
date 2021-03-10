@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using IInputField = HotChocolate.Types.IInputField;
 
@@ -38,25 +37,19 @@ namespace DataAnnotatedModelValidations
         private static Action<IInputField> ReportErrorFactory(IMiddlewareContext context, TextInfo textInfo, List<NameString> contextPath) =>
             argument =>
             {
-                if (
-                    argument is not { }
-                    || context.ArgumentValue<object>(argument.Name) is not { } obj
-                    || obj.GetType().GetCustomAttribute(typeof(IgnoreModelValidationAttribute)) is { }
-                )
-                {
+                if (context.ArgumentValue<object>(argument.Name) is not { } item)
                     return;
-                }
 
                 var validationResults = new List<ValidationResult>();
 
-                Validator.TryValidateObject(obj, new ValidationContext(obj), validationResults, true);
+                _ = ValidateItem(argument.ContextData, item, validationResults);
 
                 foreach (var validationResult in validationResults)
                 {
                     context.ReportError(
                         ErrorBuilder.New()
                             .SetMessage($"{validationResult.ErrorMessage}")
-                            .SetCode("400")
+                            .SetCode("DAMV400")
                             .SetPath(GenerateArgumentPath(argument.Name, textInfo, contextPath, validationResult))
                             .SetExtension("field", argument.Coordinate.FieldName)
                             .SetExtension("type", argument.Coordinate.TypeName)
@@ -68,11 +61,15 @@ namespace DataAnnotatedModelValidations
                 validationResults = default;
             };
 
+        private static bool ValidateItem(IReadOnlyDictionary<string, object?> context, object item, List<ValidationResult> validationResults) =>
+            context.TryGetValue(nameof(ValidationAttribute), out var attrs) && attrs is IEnumerable<ValidationAttribute> attributes
+                ? Validator.TryValidateValue(item, new ValidationContext(item), validationResults, attributes)
+                : Validator.TryValidateObject(item, new ValidationContext(item), validationResults, true);
+
         private static void ValidateInputs(IMiddlewareContext context)
         {
-            var arguments = context.Field.Arguments;
-
-            if (arguments.Count == 0) return;
+            if (context.Field.Arguments is not { Count: > 0 } arguments)
+                return;
 
             var textInfo = CultureInfo.CurrentCulture.TextInfo;
             var contextPath =
@@ -83,6 +80,10 @@ namespace DataAnnotatedModelValidations
 
             arguments
                 .AsParallel()
+                .Where(argument =>
+                    argument is { }
+                    && !argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute))
+                )
                 .ForAll(ReportErrorFactory(context, textInfo, contextPath));
         }
 
@@ -90,7 +91,8 @@ namespace DataAnnotatedModelValidations
         {
             ValidateInputs(context);
 
-            await _next(context).ConfigureAwait(false);
+            if (!context.HasErrors)
+                await _next(context).ConfigureAwait(false);
         }
     }
 }

@@ -1,0 +1,33 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field Email must be a string or array type with a minimum length of \u00273\u0027.",
+      "path": [
+        "sample",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV400",
+        "field": "sample",
+        "type": "Query"
+      }
+    },
+    {
+      "message": "The Email field is not a valid e-mail address.",
+      "path": [
+        "sample",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV400",
+        "field": "sample",
+        "type": "Query"
+      }
+    }
+  ],
+  "data": {
+    "sample": null
+  }
+}
