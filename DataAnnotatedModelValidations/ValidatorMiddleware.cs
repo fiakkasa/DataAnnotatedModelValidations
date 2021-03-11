@@ -48,7 +48,7 @@ namespace DataAnnotatedModelValidations
                 {
                     context.ReportError(
                         ErrorBuilder.New()
-                            .SetMessage($"{validationResult.ErrorMessage}")
+                            .SetMessage(validationResult.ErrorMessage ?? "Unspecified Error")
                             .SetCode("DAMV-400")
                             .SetPath(GenerateArgumentPath(argument.Name, textInfo, contextPath, validationResult))
                             .SetExtension("field", argument.Coordinate.FieldName)
