@@ -10,15 +10,23 @@ namespace DataAnnotatedModelValidations.Tests
 {
     public class ValidatorMiddlewareTests
     {
+        private readonly Mock<FieldDelegate> mockFieldDelegate;
+        private readonly Mock<IMiddlewareContext> mockContext;
+        private readonly ValidatorMiddleware middleware;
+
+        public ValidatorMiddlewareTests()
+        {
+            mockFieldDelegate = new();
+            mockContext = new();
+            middleware = new(mockFieldDelegate.Object);
+        }
+
         [Fact(DisplayName = "InvokeAsync - No Arguments")]
         public async Task InvokeAsyncNoArguments()
         {
-            var mockContext = new Mock<IMiddlewareContext>();
             mockContext
                 .SetupGet(p => p.Field)
                 .Returns(new Mock<IObjectField>().Object);
-            var mockFieldDelegate = new Mock<FieldDelegate>();
-            var middleware = new ValidatorMiddleware(mockFieldDelegate.Object);
 
             await middleware.InvokeAsync(mockContext.Object).ConfigureAwait(false);
             mockFieldDelegate.Verify();
@@ -38,14 +46,11 @@ namespace DataAnnotatedModelValidations.Tests
             mockField
                 .SetupGet(p => p.Arguments)
                 .Returns(mockFieldCollection.Object);
-            var mockContext = new Mock<IMiddlewareContext>();
             mockContext
                 .SetupGet(p => p.Field)
                 .Returns(mockField.Object);
             mockContext.SetupGet(p => p.Path)
                 .Returns(Path.New(new NameString("path")));
-            var mockFieldDelegate = new Mock<FieldDelegate>();
-            var middleware = new ValidatorMiddleware(mockFieldDelegate.Object);
 
             await middleware.InvokeAsync(mockContext.Object).ConfigureAwait(false);
             mockFieldDelegate.Verify();
