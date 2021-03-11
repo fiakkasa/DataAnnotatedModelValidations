@@ -5,7 +5,6 @@ using Snapshooter;
 using Snapshooter.Xunit;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,22 +21,17 @@ namespace DataAnnotatedModelValidations.Tests
             public string? Email { get; set; }
 
             [GraphQLIgnore]
-            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext) =>
-                (
-                    Email?.StartsWith("no-property-name") == true
-                        ? new[] { new ValidationResult("no-property-name") }
-                        : Enumerable.Empty<ValidationResult>()
-                )
-                .Concat(
-                    Email?.StartsWith("empty-property-name") == true
-                        ? new[] { new ValidationResult("empty-property-name", new[] { "" }) }
-                        : Enumerable.Empty<ValidationResult>()
-                )
-                .Concat(
-                    Email?.StartsWith("null-error-message") == true
-                        ? new[] { new ValidationResult(null) }
-                        : Enumerable.Empty<ValidationResult>()
-                );
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                if (Email?.StartsWith("no-property-name") == true)
+                    yield return new ValidationResult("no-property-name");
+
+                if (Email?.StartsWith("empty-property-name") == true)
+                    yield return new ValidationResult("empty-property-name", new[] { "" });
+
+                if (Email?.StartsWith("null-error-message") == true)
+                    yield return new ValidationResult(null);
+            }
         }
 
         public class MockService
