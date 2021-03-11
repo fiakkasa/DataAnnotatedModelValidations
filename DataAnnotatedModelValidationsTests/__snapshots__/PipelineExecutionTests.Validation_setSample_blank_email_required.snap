@@ -1,20 +1,21 @@
 ﻿{
   "errors": [
     {
-      "message": "empty-property-name",
+      "message": "The Email field is required.",
       "path": [
-        "sample",
-        "obj"
+        "setSample",
+        "obj",
+        "email"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "sample",
-        "type": "Query",
+        "field": "setSample",
+        "type": "Mutation",
         "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "sample": null
+    "setSample": null
   }
 }

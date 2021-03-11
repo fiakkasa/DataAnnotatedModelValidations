@@ -56,6 +56,13 @@ namespace DataAnnotatedModelValidations.Tests
                 service.Get(obj?.Email);
         }
 
+        public class Mutation
+        {
+            public string? SetText([MinLength(5)] string? txt) => txt;
+
+            public Sample? SetSample(Sample? obj) => obj;
+        }
+
         [Theory]
         [InlineData("{ text(txt: \"abc\") }", 1, "text_min_length_5")]
         [InlineData("{ textAlias:text(txt: \"abc\") }", 1, "text_alias_min_length_5")]
@@ -74,6 +81,8 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sampleIgnoreValidation(obj: null) { email } }", null, "sampleIgnoreValidation_no_errors")]
         [InlineData("{ sampleWithService(obj: { email: \"abc\" }) { email } }", 1, "sampleWithService_valid_email")]
         [InlineData("{ sampleWithService(obj: { email: \"a@b.com\" }) { email } }", null, "sampleWithService_no_errors")]
+        [InlineData("mutation { setSample(obj: { email: \"\" }) { email } }", 1, "setSample_blank_email_required")]
+        [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
         public async Task Validation(string query, int? numberOfErrors, string description)
         {
             var result =
@@ -83,6 +92,7 @@ namespace DataAnnotatedModelValidations.Tests
                     .TryAddTypeInterceptor<ValidatorTypeInterceptor>()
                     .UseField<ValidatorMiddleware>()
                     .AddQueryType<Query>()
+                    .AddMutationType<Mutation>()
                     .ExecuteRequestAsync(query)
                     .ConfigureAwait(true);
 

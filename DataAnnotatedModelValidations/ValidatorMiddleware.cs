@@ -49,10 +49,11 @@ namespace DataAnnotatedModelValidations
                     context.ReportError(
                         ErrorBuilder.New()
                             .SetMessage($"{validationResult.ErrorMessage}")
-                            .SetCode("DAMV400")
+                            .SetCode("DAMV-400")
                             .SetPath(GenerateArgumentPath(argument.Name, textInfo, contextPath, validationResult))
                             .SetExtension("field", argument.Coordinate.FieldName)
                             .SetExtension("type", argument.Coordinate.TypeName)
+                            .SetExtension("specifiedBy", "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
                             .Build()
                     );
                 }

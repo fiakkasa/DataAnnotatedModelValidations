@@ -7,9 +7,10 @@
         "txt"
       ],
       "extensions": {
-        "code": "DAMV400",
+        "code": "DAMV-400",
         "field": "text",
-        "type": "Query"
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],

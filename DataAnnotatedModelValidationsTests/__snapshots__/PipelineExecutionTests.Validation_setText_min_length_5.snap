@@ -1,20 +1,20 @@
 ﻿{
   "errors": [
     {
-      "message": "empty-property-name",
+      "message": "The field String must be a string or array type with a minimum length of \u00275\u0027.",
       "path": [
-        "sample",
-        "obj"
+        "setText",
+        "txt"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "sample",
-        "type": "Query",
+        "field": "setText",
+        "type": "Mutation",
         "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "sample": null
+    "setText": null
   }
 }
