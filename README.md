@@ -1,5 +1,9 @@
 # DataAnnotatedModelValidations
 
+[![NuGet Version](https://img.shields.io/nuget/v/DataAnnotatedModelValidations)](https://www.nuget.org/packages/DataAnnotatedModelValidations)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/DataAnnotatedModelValidations)](https://www.nuget.org/packages/DataAnnotatedModelValidations)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 Data Annotated Model Validation Middleware for HotChocolate.
 
 The purpose of this Middleware is to provide the same behavior like a ASP.Net controllers where all models would be validated according to the specified Data Annotations or the `IValidatableObject` implementation; in essence it's always on.
