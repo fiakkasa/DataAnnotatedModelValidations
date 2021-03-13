@@ -2,7 +2,7 @@
 
 [![NuGet Version](https://img.shields.io/nuget/v/DataAnnotatedModelValidations)](https://www.nuget.org/packages/DataAnnotatedModelValidations)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/DataAnnotatedModelValidations)](https://www.nuget.org/packages/DataAnnotatedModelValidations)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/fiakkasa/DataAnnotatedModelValidations/blob/master/LICENSE)
 
 Data Annotated Model Validation Middleware for HotChocolate.
 
