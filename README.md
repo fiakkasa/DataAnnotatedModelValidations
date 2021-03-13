@@ -6,6 +6,8 @@ The purpose of this Middleware is to provide the same behavior like a ASP.Net co
 
 In addition individual method arguments can be validated using annotations from `System.ComponentModel.Annotations`.
 
+[Nuget](https://www.nuget.org/packages/DataAnnotatedModelValidations/)
+
 ## Usage
 
 Locate your GraphQL Server registration and append `.AddDataAnnotationsValidator()`
