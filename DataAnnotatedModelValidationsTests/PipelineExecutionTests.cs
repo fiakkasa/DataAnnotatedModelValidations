@@ -24,19 +24,24 @@ namespace DataAnnotatedModelValidations.Tests
             public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
             {
                 if (Email?.StartsWith("no-property-name") == true)
-                    yield return new ValidationResult("no-property-name");
+                    yield return new("no-property-name");
 
                 if (Email?.StartsWith("empty-property-name") == true)
-                    yield return new ValidationResult("empty-property-name", new[] { "" });
+                    yield return new("empty-property-name", new[] { "" });
 
                 if (Email?.StartsWith("null-error-message") == true)
-                    yield return new ValidationResult(null);
+                    yield return new(null);
+
+                if (Email?.StartsWith("message-from-service") == true)
+                    yield return new(validationContext.GetRequiredService<MockService>().Message);
             }
         }
 
         public class MockService
         {
             public Sample? Get(string? email) => new() { Email = email };
+
+            public string Message { get; } = "Splash!";
         }
 
         public class Query
@@ -78,6 +83,7 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sample(obj: { email: \"no-property-name@b.com\" }) { email } }", 1, "sample_no-property-name_custom_validation")]
         [InlineData("{ sample(obj: { email: \"empty-property-name@b.com\" }) { email } }", 1, "sample_empty-property-name_custom_validation")]
         [InlineData("{ sample(obj: { email: \"null-error-message@b.com\" }) { email } }", 1, "sample_null-error-message_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"message-from-service@b.com\" }) { email } }", 1, "sample_message-from-service_custom_validation")]
         [InlineData("{ sample(obj: { email: \"a@b.com\" }) { email } }", null, "sample_no_errors")]
         [InlineData("{ sampleNonNull(obj: null) { email } }", 1, "sampleNonNull_required")]
         [InlineData("{ sampleNonNull(obj: { email: \"ab\" }) { email } }", 2, "sampleNonNull_min_length_3_and_valid_email")]

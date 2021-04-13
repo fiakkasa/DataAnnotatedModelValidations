@@ -42,7 +42,7 @@ namespace DataAnnotatedModelValidations
 
                 var validationResults = new List<ValidationResult>();
 
-                _ = ValidateItem(argument.ContextData, item, validationResults);
+                _ = ValidateItem(argument.ContextData, item, context.Services, validationResults);
 
                 foreach (var validationResult in validationResults)
                 {
@@ -62,10 +62,10 @@ namespace DataAnnotatedModelValidations
                 validationResults = default;
             };
 
-        private static bool ValidateItem(IReadOnlyDictionary<string, object?> context, object item, List<ValidationResult> validationResults) =>
+        private static bool ValidateItem(IReadOnlyDictionary<string, object?> context, object item, IServiceProvider serviceProvider, List<ValidationResult> validationResults) =>
             context.TryGetValue(nameof(ValidationAttribute), out var attrs) && attrs is IEnumerable<ValidationAttribute> attributes
-                ? Validator.TryValidateValue(item, new ValidationContext(item), validationResults, attributes)
-                : Validator.TryValidateObject(item, new ValidationContext(item), validationResults, true);
+                ? Validator.TryValidateValue(item, new(item, serviceProvider, default), validationResults, attributes)
+                : Validator.TryValidateObject(item, new(item, serviceProvider, default), validationResults, true);
 
         private static void ValidateInputs(IMiddlewareContext context)
         {
