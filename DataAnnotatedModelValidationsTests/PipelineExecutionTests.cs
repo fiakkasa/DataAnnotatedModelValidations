@@ -97,7 +97,7 @@ namespace DataAnnotatedModelValidations.Tests
         [Fact(DisplayName = "No Error when Filter, Sort, And - Or Pagination Definitions Present")]
         public async Task NoErrorFilterSortAndOrPaginationDefinitionsPresent()
         {
-            var query =
+            const string query =
 @"{ 
     samples { 
         items { 
