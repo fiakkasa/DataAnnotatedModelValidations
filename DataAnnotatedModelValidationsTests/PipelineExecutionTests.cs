@@ -1,10 +1,13 @@
 ﻿using HotChocolate;
+using HotChocolate.Data;
 using HotChocolate.Execution;
+using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter;
 using Snapshooter.Xunit;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -37,6 +40,23 @@ namespace DataAnnotatedModelValidations.Tests
             }
         }
 
+        [ExtendObjectType(typeof(Sample))]
+        public class SampleExtension
+        {
+            [UseOffsetPaging]
+            [UseSorting]
+            [UseFiltering]
+            public IQueryable<Sample> Relatedpsf => new Sample[] { new() { Email = "a@a.com" }, new() { Email = "b@a.com" } }.AsQueryable();
+
+            [UseSorting]
+            [UseFiltering]
+            public IQueryable<Sample> Relatedsf => new Sample[] { new() { Email = "a@a.com" }, new() { Email = "b@a.com" } }.AsQueryable();
+
+            [UseOffsetPaging]
+            [UseFiltering]
+            public IQueryable<Sample> Relatedp => new Sample[] { new() { Email = "a@a.com" }, new() { Email = "b@a.com" } }.AsQueryable();
+        }
+
         public class MockService
         {
             public Sample? Get(string? email) => new() { Email = email };
@@ -60,6 +80,11 @@ namespace DataAnnotatedModelValidations.Tests
 
             public Sample? GetSampleWithService(Sample? obj, [Service] MockService service) =>
                 service.Get(obj?.Email);
+
+            [UseOffsetPaging]
+            [UseSorting]
+            [UseFiltering]
+            public IQueryable<Sample> Samples => new Sample[] { new() }.AsQueryable();
         }
 
         public class Mutation
@@ -67,6 +92,54 @@ namespace DataAnnotatedModelValidations.Tests
             public string? SetText([MinLength(5)] string? txt) => txt;
 
             public Sample? SetSample(Sample? obj) => obj;
+        }
+
+        [Fact(DisplayName = "No Error when Filter, Sort, And - Or Pagination Definitions Present")]
+        public async Task NoErrorFilterSortAndOrPaginationDefinitionsPresent()
+        {
+            var query =
+@"{ 
+    samples { 
+        items { 
+            psf1: relatedpsf(
+                take: 1
+                skip: 1
+                where: { email: { neq: ""t@t.com"" } }
+                order: { email: ASC }
+            ) { items { email } }
+            psf2: relatedpsf(
+                skip: 1
+                where: { email: { neq: ""t@t.com"" } }
+                order: { email: ASC }
+            ) { items { email } }
+            psf3: relatedpsf(
+                where: { email: { neq: ""t@t.com"" } }
+                order: { email: ASC }
+            ) { items { email } }
+            psf4: relatedpsf(
+                order: { email: ASC }
+            ) { items { email } }
+            psf5: relatedpsf { items { email } }
+            relatedsf { email }
+            relatedp { items { email } }
+        } 
+    } 
+}";
+            var result =
+                await new ServiceCollection()
+                    .AddSingleton<MockService>()
+                    .AddGraphQL()
+                    .TryAddTypeInterceptor<ValidatorTypeInterceptor>()
+                    .UseField<ValidatorMiddleware>()
+                    .AddQueryType<Query>()
+                    .AddTypeExtension<SampleExtension>()
+                    .AddSorting()
+                    .AddFiltering()
+                    .ExecuteRequestAsync(query)
+                    .ConfigureAwait(true);
+
+            Assert.Null(result.Errors);
+            (await result.ToJsonAsync().ConfigureAwait(false)).MatchSnapshot();
         }
 
         [Theory]
@@ -102,6 +175,8 @@ namespace DataAnnotatedModelValidations.Tests
                     .UseField<ValidatorMiddleware>()
                     .AddQueryType<Query>()
                     .AddMutationType<Mutation>()
+                    .AddSorting()
+                    .AddFiltering()
                     .ExecuteRequestAsync(query)
                     .ConfigureAwait(true);
 

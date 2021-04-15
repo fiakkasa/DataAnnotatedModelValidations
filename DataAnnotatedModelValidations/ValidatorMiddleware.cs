@@ -76,6 +76,7 @@ namespace DataAnnotatedModelValidations
             var contextPath =
                 context.Path
                     .ToList()
+                    .Where(node => node is not int)
                     .Select(node => new NameString($"{node}"))
                     .ToList();
 

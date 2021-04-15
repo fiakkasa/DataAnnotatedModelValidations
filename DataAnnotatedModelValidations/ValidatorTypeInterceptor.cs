@@ -18,15 +18,15 @@ namespace DataAnnotatedModelValidations
                 foreach (var argument in field.Arguments.Where(argument => argument is { Parameter: { } }))
                 {
                     if (
-                        argument!.Parameter!.IsDefined(typeof(IgnoreModelValidationAttribute), true)
-                        || argument.Parameter.ParameterType.IsDefined(typeof(IgnoreModelValidationAttribute), true)
+                        argument.Parameter!.IsDefined(typeof(IgnoreModelValidationAttribute), true)
+                        || argument.Parameter!.ParameterType.IsDefined(typeof(IgnoreModelValidationAttribute), true)
                     )
                     {
                         argument.ContextData[nameof(IgnoreModelValidationAttribute)] = true;
                         continue;
                     }
 
-                    if (argument.Parameter.GetCustomAttributes(typeof(ValidationAttribute), true) is { Length: > 0 } attributes)
+                    if (argument.Parameter!.GetCustomAttributes(typeof(ValidationAttribute), true) is { Length: > 0 } attributes)
                         argument.ContextData[nameof(ValidationAttribute)] = attributes;
                 }
             }
