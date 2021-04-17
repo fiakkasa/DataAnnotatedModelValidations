@@ -34,7 +34,7 @@ namespace DataAnnotatedModelValidations
                 )
                 .Aggregate(Path.New(contextPath[0]), (path, segment) => path.Append(segment));
 
-        private static Action<IInputField> ReportErrorFactory(IMiddlewareContext context, TextInfo textInfo, List<NameString> contextPath) =>
+        private static Action<IInputField> ReportErrorFactory(IMiddlewareContext context, TextInfo textInfo, Path contextPath) =>
             argument =>
             {
                 if (context.ArgumentValue<object>(argument.Name) is not { } item)
@@ -42,7 +42,17 @@ namespace DataAnnotatedModelValidations
 
                 var validationResults = new List<ValidationResult>();
 
-                _ = ValidateItem(argument.ContextData, item, context.Services, validationResults);
+                if (ValidateItem(argument.ContextData, item, context.Services, validationResults))
+                {
+                    validationResults = default;
+                    return;
+                }
+
+                var contextPathList =
+                    contextPath
+                        .ToList()
+                        .OfType<NameString>()
+                        .ToList();
 
                 foreach (var validationResult in validationResults)
                 {
@@ -50,7 +60,7 @@ namespace DataAnnotatedModelValidations
                         ErrorBuilder.New()
                             .SetMessage(validationResult.ErrorMessage ?? "Unspecified Error")
                             .SetCode("DAMV-400")
-                            .SetPath(GenerateArgumentPath(argument.Name, textInfo, contextPath, validationResult))
+                            .SetPath(GenerateArgumentPath(argument.Name, textInfo, contextPathList, validationResult))
                             .SetExtension("field", argument.Coordinate.FieldName)
                             .SetExtension("type", argument.Coordinate.TypeName)
                             .SetExtension("specifiedBy", "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
@@ -72,21 +82,13 @@ namespace DataAnnotatedModelValidations
             if (context.Field.Arguments is not { Count: > 0 } arguments)
                 return;
 
-            var textInfo = CultureInfo.CurrentCulture.TextInfo;
-            var contextPath =
-                context.Path
-                    .ToList()
-                    .Where(node => node is not int)
-                    .Select(node => new NameString($"{node}"))
-                    .ToList();
-
             arguments
                 .AsParallel()
                 .Where(argument =>
                     argument is { }
                     && !argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute))
                 )
-                .ForAll(ReportErrorFactory(context, textInfo, contextPath));
+                .ForAll(ReportErrorFactory(context, CultureInfo.CurrentCulture.TextInfo, context.Path));
         }
 
         public async Task InvokeAsync(IMiddlewareContext context)
