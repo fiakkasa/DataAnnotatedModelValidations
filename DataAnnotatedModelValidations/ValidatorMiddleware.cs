@@ -79,7 +79,7 @@ namespace DataAnnotatedModelValidations
 
         private static void ValidateInputs(IMiddlewareContext context)
         {
-            if (context.Field.Arguments is not { Count: > 0 } arguments)
+            if (context.Selection.Field.Arguments is not { Count: > 0 } arguments)
                 return;
 
             arguments

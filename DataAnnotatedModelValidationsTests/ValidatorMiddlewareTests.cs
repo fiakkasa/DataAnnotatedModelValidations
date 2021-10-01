@@ -25,7 +25,7 @@ namespace DataAnnotatedModelValidations.Tests
         public async Task InvokeAsyncNoArguments()
         {
             mockContext
-                .SetupGet(p => p.Field)
+                .SetupGet(p => p.Selection.Field)
                 .Returns(new Mock<IObjectField>().Object);
 
             await middleware.InvokeAsync(mockContext.Object).ConfigureAwait(false);
@@ -47,7 +47,7 @@ namespace DataAnnotatedModelValidations.Tests
                 .SetupGet(p => p.Arguments)
                 .Returns(mockFieldCollection.Object);
             mockContext
-                .SetupGet(p => p.Field)
+                .SetupGet(p => p.Selection.Field)
                 .Returns(mockField.Object);
             mockContext.SetupGet(p => p.Path)
                 .Returns(Path.New(new NameString("path")));
