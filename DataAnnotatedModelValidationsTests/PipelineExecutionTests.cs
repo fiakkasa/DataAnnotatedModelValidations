@@ -40,6 +40,12 @@ namespace DataAnnotatedModelValidations.Tests
             }
         }
 
+        public record InvalidRecord
+        {
+            [MaxLength(10)]
+            public Optional<string> Text { get; init; }
+        }
+
         [ExtendObjectType(typeof(Sample))]
         public class SampleExtension
         {
@@ -85,7 +91,12 @@ namespace DataAnnotatedModelValidations.Tests
             [UseSorting]
             [UseFiltering]
             public IQueryable<Sample> Samples => new Sample[] { new() }.AsQueryable();
+
+            public InvalidRecord GetInvalidRecord(InvalidRecord obj) => obj;
         }
+
+        [ExtendObjectType(nameof(Query))]
+        public class ExtendedQuery : Query { }
 
         public class Mutation
         {
@@ -93,6 +104,9 @@ namespace DataAnnotatedModelValidations.Tests
 
             public Sample? SetSample(Sample? obj) => obj;
         }
+
+        [ExtendObjectType(nameof(Mutation))]
+        public class ExtendedMutation : Mutation { }
 
         [Fact(DisplayName = "No Error when Filter, Sort, And - Or Pagination Definitions Present")]
         public async Task NoErrorFilterSortAndOrPaginationDefinitionsPresent()
@@ -128,9 +142,8 @@ namespace DataAnnotatedModelValidations.Tests
             var result =
                 await new ServiceCollection()
                     .AddSingleton<MockService>()
-                    .AddGraphQL()
-                    .TryAddTypeInterceptor<ValidatorTypeInterceptor>()
-                    .UseField<ValidatorMiddleware>()
+                    .AddGraphQLServer()
+                    .AddDataAnnotationsValidator()
                     .AddQueryType<Query>()
                     .AddTypeExtension<SampleExtension>()
                     .AddSorting()
@@ -143,6 +156,7 @@ namespace DataAnnotatedModelValidations.Tests
         }
 
         [Theory]
+        [InlineData("{ invalidRecord(obj: { text: \"test\" }) { text } }", 1, "invalid_record")]
         [InlineData("{ info }", null, "info")]
         [InlineData("{ text(txt: \"abc\") }", 1, "text_min_length_5")]
         [InlineData("{ textAlias:text(txt: \"abc\") }", 1, "text_alias_min_length_5")]
@@ -165,16 +179,59 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sampleWithService(obj: { email: \"a@b.com\" }) { email } }", null, "sampleWithService_no_errors")]
         [InlineData("mutation { setSample(obj: { email: \"\" }) { email } }", 1, "setSample_blank_email_required")]
         [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
-        public async Task Validation(string query, int? numberOfErrors, string description)
+        public async Task ValidationClassBased(string query, int? numberOfErrors, string description)
         {
             var result =
                 await new ServiceCollection()
                     .AddSingleton<MockService>()
-                    .AddGraphQL()
-                    .TryAddTypeInterceptor<ValidatorTypeInterceptor>()
-                    .UseField<ValidatorMiddleware>()
+                    .AddGraphQLServer()
+                    .AddDataAnnotationsValidator()
                     .AddQueryType<Query>()
                     .AddMutationType<Mutation>()
+                    .AddSorting()
+                    .AddFiltering()
+                    .ExecuteRequestAsync(query)
+                    .ConfigureAwait(true);
+
+            Assert.Equal(numberOfErrors, result.Errors?.Count);
+            (await result.ToJsonAsync().ConfigureAwait(false)).MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
+        }
+
+        [Theory]
+        [InlineData("{ invalidRecord(obj: { text: \"test\" }) { text } }", 1, "invalid_record")]
+        [InlineData("{ info }", null, "info")]
+        [InlineData("{ text(txt: \"abc\") }", 1, "text_min_length_5")]
+        [InlineData("{ textAlias:text(txt: \"abc\") }", 1, "text_alias_min_length_5")]
+        [InlineData("{ text(txt: \"abcdefg\") }", null, "text_no_errors")]
+        [InlineData("{ textIgnoreValidation(txt: \"a\") }", null, "textIgnoreValidation_no_errors")]
+        [InlineData("{ sample(obj: null) { email } }", null, "sample_null_no_errors")]
+        [InlineData("{ sample(obj: { email: null }) { email } }", 1, "sample_required")]
+        [InlineData("{ sample(obj: { email: \"\" }) { email } }", 1, "sample_blank_email_required")]
+        [InlineData("{ sampleAlias:sample(obj: { email: \"\" }) { email } }", 1, "sample_alias_blank_email_required")]
+        [InlineData("{ sample(obj: { email: \"ab\" }) { email } }", 2, "sample_min_length_3_and_valid_email")]
+        [InlineData("{ sample(obj: { email: \"no-property-name@b.com\" }) { email } }", 1, "sample_no-property-name_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"empty-property-name@b.com\" }) { email } }", 1, "sample_empty-property-name_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"null-error-message@b.com\" }) { email } }", 1, "sample_null-error-message_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"message-from-service@b.com\" }) { email } }", 1, "sample_message-from-service_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"a@b.com\" }) { email } }", null, "sample_no_errors")]
+        [InlineData("{ sampleNonNull(obj: null) { email } }", 1, "sampleNonNull_required")]
+        [InlineData("{ sampleNonNull(obj: { email: \"ab\" }) { email } }", 2, "sampleNonNull_min_length_3_and_valid_email")]
+        [InlineData("{ sampleIgnoreValidation(obj: null) { email } }", null, "sampleIgnoreValidation_no_errors")]
+        [InlineData("{ sampleWithService(obj: { email: \"abc\" }) { email } }", 1, "sampleWithService_valid_email")]
+        [InlineData("{ sampleWithService(obj: { email: \"a@b.com\" }) { email } }", null, "sampleWithService_no_errors")]
+        [InlineData("mutation { setSample(obj: { email: \"\" }) { email } }", 1, "setSample_blank_email_required")]
+        [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
+        public async Task ValidationExtendedBased(string query, int? numberOfErrors, string description)
+        {
+            var result =
+                await new ServiceCollection()
+                    .AddSingleton<MockService>()
+                    .AddGraphQLServer()
+                    .AddDataAnnotationsValidator()
+                    .AddQueryType(x => x.Name(nameof(Query)))
+                    .AddMutationType(x => x.Name(nameof(Mutation)))
+                    .AddTypeExtension<ExtendedQuery>()
+                    .AddTypeExtension<ExtendedMutation>()
                     .AddSorting()
                     .AddFiltering()
                     .ExecuteRequestAsync(query)

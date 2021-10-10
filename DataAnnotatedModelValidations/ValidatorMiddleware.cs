@@ -72,11 +72,27 @@ namespace DataAnnotatedModelValidations
                 validationResults = default;
             };
 
-        private static bool ValidateItem(IReadOnlyDictionary<string, object?> context, object item, IServiceProvider serviceProvider, List<ValidationResult> validationResults) =>
-            context.TryGetValue(nameof(ValidationAttribute), out var attrs) && attrs is IEnumerable<ValidationAttribute> attributes
-                ? Validator.TryValidateValue(item, new(item, serviceProvider, default), validationResults, attributes)
-                : Validator.TryValidateObject(item, new(item, serviceProvider, default), validationResults, true);
+        private static bool ValidateItem(IReadOnlyDictionary<string, object?> context, object item, IServiceProvider serviceProvider, List<ValidationResult> validationResults)
+        {
+            try
+            {
+                return context.TryGetValue(nameof(ValidationAttribute), out var attrs) && attrs is IEnumerable<ValidationAttribute> attributes
+                    ? Validator.TryValidateValue(item, new(item, serviceProvider, default), validationResults, attributes)
+                    : Validator.TryValidateObject(item, new(item, serviceProvider, default), validationResults, true);
+            }
+            catch (InvalidCastException ex) when (ex.Source == "System.ComponentModel.Annotations")
+            {
+                validationResults.Add(
+                    new(
+                        ex.TargetSite?.DeclaringType?.Name.Length > 0
+                            ? $"{ex.Message[0..^1]} for validation attribute {ex.TargetSite?.DeclaringType?.Name}"
+                            : ex.Message
+                    )
+                );
 
+                return false;
+            }
+        }
         private static void ValidateInputs(IMiddlewareContext context)
         {
             if (context.Selection.Field.Arguments is not { Count: > 0 } arguments)

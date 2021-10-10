@@ -1,0 +1,20 @@
+﻿{
+  "errors": [
+    {
+      "message": "no-property-name",
+      "path": [
+        "sample",
+        "obj"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "sample": null
+  }
+}

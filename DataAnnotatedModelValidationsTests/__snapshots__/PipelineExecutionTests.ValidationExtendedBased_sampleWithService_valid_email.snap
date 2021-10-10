@@ -1,0 +1,21 @@
+﻿{
+  "errors": [
+    {
+      "message": "The Email field is not a valid e-mail address.",
+      "path": [
+        "sampleWithService",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sampleWithService",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "sampleWithService": null
+  }
+}

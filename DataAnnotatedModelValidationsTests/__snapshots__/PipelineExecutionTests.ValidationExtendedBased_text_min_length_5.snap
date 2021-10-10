@@ -1,0 +1,20 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field String must be a string or array type with a minimum length of \u00275\u0027.",
+      "path": [
+        "text",
+        "txt"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "text",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "text": null
+  }
+}

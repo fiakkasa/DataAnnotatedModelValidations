@@ -1,0 +1,21 @@
+﻿{
+  "errors": [
+    {
+      "message": "The Email field is required.",
+      "path": [
+        "setSample",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setSample",
+        "type": "Mutation",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "setSample": null
+  }
+}
