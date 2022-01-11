@@ -44,7 +44,7 @@ namespace DataAnnotatedModelValidations
 
                 if (ValidateItem(argument.ContextData, item, context.Services, validationResults))
                 {
-                    validationResults = default;
+                    validationResults.Clear();
                     return;
                 }
 
@@ -69,7 +69,6 @@ namespace DataAnnotatedModelValidations
                 }
 
                 validationResults.Clear();
-                validationResults = default;
             };
 
         private static bool ValidateItem(IReadOnlyDictionary<string, object?> context, object item, IServiceProvider serviceProvider, List<ValidationResult> validationResults)
