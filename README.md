@@ -33,7 +33,7 @@ public void ConfigureServices(IServiceCollection services)
 
 ### Excluding a model from being validated
 
-To exlude a certain method argument from being validated just add the `IgnoreModelValidation` attribute.
+To exclude a certain method argument from being validated just add the `IgnoreModelValidation` attribute.
 
 ex.
 
@@ -75,6 +75,10 @@ public class Sample : IValidatableObject
             : Enumerable.Empty<ValidationResult>();
 }
 ```
+
+If you need to support numerical sequences in your validation results, consider adding the names as `FieldName[index]`.
+
+The field name will be transformed in the error path as `fieldName_index`.
 
 ## Similar Projects
 

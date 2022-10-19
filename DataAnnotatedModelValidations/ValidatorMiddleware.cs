@@ -1,10 +1,11 @@
 ﻿using HotChocolate;
 using HotChocolate.Resolvers;
+using Humanizer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using IInputField = HotChocolate.Types.IInputField;
 
@@ -19,22 +20,36 @@ namespace DataAnnotatedModelValidations
             _next = next;
         }
 
-        private static NamePathSegment GenerateArgumentPath(NameString name, TextInfo textInfo, List<NameString> contextPath, ValidationResult validationResult) =>
+        private static NamePathSegment GenerateArgumentPath(NameString name, List<NameString> contextPath, ValidationResult validationResult) =>
             contextPath
                 .Skip(1)
                 .Concat(
-                    validationResult.MemberNames.FirstOrDefault() is string propertyName
-                    && propertyName.Length > 0
-                        ? new[]
-                        {
-                            name,
-                            new NameString($"{char.ToLowerInvariant(propertyName[0])}{textInfo.ToTitleCase(propertyName)[1..]}")
-                        }
-                        : new[] { name }
+                    (validationResult.MemberNames.FirstOrDefault() is { Length: > 0 }) switch
+                    {
+                        true =>
+                            validationResult
+                                .MemberNames
+                                .Select(x => x?.Trim())
+                                .Where(x => x is { Length: > 0 })
+                                .Select(x => new NameString(
+                                    Regex.Replace(
+                                        Regex.Replace(
+                                                x!.Camelize(),
+                                                @"[\[\]]+",
+                                                "_"
+                                            ),
+                                            "_$",
+                                            ""
+                                        )
+                                    )
+                                )
+                                .Prepend(name),
+                        _ => new[] { name }
+                    }
                 )
                 .Aggregate(Path.New(contextPath[0]), (path, segment) => path.Append(segment));
 
-        private static Action<IInputField> ReportErrorFactory(IMiddlewareContext context, TextInfo textInfo, Path contextPath) =>
+        private static Action<IInputField> ReportErrorFactory(IMiddlewareContext context, Path contextPath) =>
             argument =>
             {
                 if (context.ArgumentValue<object>(argument.Name) is not { } item)
@@ -60,7 +75,7 @@ namespace DataAnnotatedModelValidations
                         ErrorBuilder.New()
                             .SetMessage(validationResult.ErrorMessage ?? "Unspecified Error")
                             .SetCode("DAMV-400")
-                            .SetPath(GenerateArgumentPath(argument.Name, textInfo, contextPathList, validationResult))
+                            .SetPath(GenerateArgumentPath(argument.Name, contextPathList, validationResult))
                             .SetExtension("field", argument.Coordinate.FieldName)
                             .SetExtension("type", argument.Coordinate.TypeName)
                             .SetExtension("specifiedBy", "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
@@ -83,9 +98,12 @@ namespace DataAnnotatedModelValidations
             {
                 validationResults.Add(
                     new(
-                        ex.TargetSite?.DeclaringType?.Name.Length > 0
-                            ? $"{ex.Message[0..^1]} for validation attribute {ex.TargetSite?.DeclaringType?.Name}"
-                            : ex.Message
+                        ex switch
+                        {
+                            { TargetSite.DeclaringType.Name: { Length: > 0 } name } =>
+                                $"{ex.Message[0..^1]} for validation attribute {name}",
+                            _ => ex.Message
+                        }
                     )
                 );
 
@@ -103,7 +121,7 @@ namespace DataAnnotatedModelValidations
                     argument is { }
                     && !argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute))
                 )
-                .ForAll(ReportErrorFactory(context, CultureInfo.CurrentCulture.TextInfo, context.Path));
+                .ForAll(ReportErrorFactory(context, context.Path));
         }
 
         public async Task InvokeAsync(IMiddlewareContext context)
