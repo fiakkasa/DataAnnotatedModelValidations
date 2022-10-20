@@ -36,9 +36,9 @@ namespace DataAnnotatedModelValidations
                                 .Where(x => x is { Length: > 0 })
                                 .Select(x => new NameString(
                                         _lastUnderscoreRegex.Replace(
-                                            _bracketsRegex.Replace(x!, "_"),
+                                            _bracketsRegex.Replace(x!.Camelize(), "_"),
                                             string.Empty
-                                        ).Camelize()
+                                        )
                                     )
                                 )
                                 .Prepend(name),
