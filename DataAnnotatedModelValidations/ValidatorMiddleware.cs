@@ -15,6 +15,9 @@ namespace DataAnnotatedModelValidations
     {
         private readonly FieldDelegate _next;
 
+        private static readonly Regex _bracketsRegex = new Regex(@"[\[\]]+", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+        private static readonly Regex _lastUnderscoreRegex = new Regex("_$", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+
         public ValidatorMiddleware(FieldDelegate next)
         {
             _next = next;
@@ -32,15 +35,10 @@ namespace DataAnnotatedModelValidations
                                 .Select(x => x?.Trim())
                                 .Where(x => x is { Length: > 0 })
                                 .Select(x => new NameString(
-                                    Regex.Replace(
-                                        Regex.Replace(
-                                                x!.Camelize(),
-                                                @"[\[\]]+",
-                                                "_"
-                                            ),
-                                            "_$",
-                                            ""
-                                        )
+                                        _lastUnderscoreRegex.Replace(
+                                            _bracketsRegex.Replace(x!, "_"),
+                                            string.Empty
+                                        ).Camelize()
                                     )
                                 )
                                 .Prepend(name),
