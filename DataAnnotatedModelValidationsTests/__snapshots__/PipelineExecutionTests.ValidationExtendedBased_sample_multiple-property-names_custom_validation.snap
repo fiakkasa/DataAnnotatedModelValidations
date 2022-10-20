@@ -1,0 +1,22 @@
+﻿{
+  "errors": [
+    {
+      "message": "multiple-property-names",
+      "path": [
+        "sample",
+        "obj",
+        "hello",
+        "world"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "sample": null
+  }
+}

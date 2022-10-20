@@ -30,10 +30,13 @@ namespace DataAnnotatedModelValidations.Tests
                     yield return new("no-property-name");
 
                 if (Email?.StartsWith("empty-property-name") == true)
-                    yield return new("empty-property-name", new[] { "" });
+                    yield return new("empty-property-name", new[] { string.Empty });
 
                 if (Email?.StartsWith("null-error-message") == true)
                     yield return new(null);
+
+                if (Email?.StartsWith("multiple-property-names") == true)
+                    yield return new("multiple-property-names", new[] { "hello", string.Empty, null!, "world" });
 
                 if (Email?.StartsWith("message-from-service") == true)
                     yield return new(validationContext.GetRequiredService<MockService>().Message);
@@ -169,6 +172,7 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sample(obj: { email: \"ab\" }) { email } }", 2, "sample_min_length_3_and_valid_email")]
         [InlineData("{ sample(obj: { email: \"no-property-name@b.com\" }) { email } }", 1, "sample_no-property-name_custom_validation")]
         [InlineData("{ sample(obj: { email: \"empty-property-name@b.com\" }) { email } }", 1, "sample_empty-property-name_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"multiple-property-names@b.com\" }) { email } }", 1, "sample_multiple-property-names_custom_validation")]
         [InlineData("{ sample(obj: { email: \"null-error-message@b.com\" }) { email } }", 1, "sample_null-error-message_custom_validation")]
         [InlineData("{ sample(obj: { email: \"message-from-service@b.com\" }) { email } }", 1, "sample_message-from-service_custom_validation")]
         [InlineData("{ sample(obj: { email: \"a@b.com\" }) { email } }", null, "sample_no_errors")]
@@ -211,6 +215,7 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sample(obj: { email: \"ab\" }) { email } }", 2, "sample_min_length_3_and_valid_email")]
         [InlineData("{ sample(obj: { email: \"no-property-name@b.com\" }) { email } }", 1, "sample_no-property-name_custom_validation")]
         [InlineData("{ sample(obj: { email: \"empty-property-name@b.com\" }) { email } }", 1, "sample_empty-property-name_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"multiple-property-names@b.com\" }) { email } }", 1, "sample_multiple-property-names_custom_validation")]
         [InlineData("{ sample(obj: { email: \"null-error-message@b.com\" }) { email } }", 1, "sample_null-error-message_custom_validation")]
         [InlineData("{ sample(obj: { email: \"message-from-service@b.com\" }) { email } }", 1, "sample_message-from-service_custom_validation")]
         [InlineData("{ sample(obj: { email: \"a@b.com\" }) { email } }", null, "sample_no_errors")]
