@@ -15,8 +15,8 @@ namespace DataAnnotatedModelValidations
     {
         private readonly FieldDelegate _next;
 
-        private static readonly Regex _bracketsRegex = new Regex(@"[\[\]]+", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
-        private static readonly Regex _lastUnderscoreRegex = new Regex("_$", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+        private static readonly Regex _bracketsRegex = new(@"[\[\]]+", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+        private static readonly Regex _lastUnderscoreRegex = new("_$", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
 
         public ValidatorMiddleware(FieldDelegate next)
         {

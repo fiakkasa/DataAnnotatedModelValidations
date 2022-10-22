@@ -42,6 +42,45 @@ namespace DataAnnotatedModelValidations.Tests
                     yield return new(validationContext.GetRequiredService<MockService>().Message);
             }
         }
+        public record NestedChild
+        {
+            [Range(1, 10)]
+            public int Count { get; set; }
+        }
+
+        public record NestedParent : IValidatableObject
+        {
+            public NestedChild Child { get; set; } = new();
+
+            public List<NestedChild> Children { get; set; } = new();
+
+            [GraphQLIgnore]
+            public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+            {
+                var validationResultsOfChild = new List<ValidationResult>();
+
+                Validator.TryValidateObject(Child, new(Child, null), validationResultsOfChild, true);
+
+                foreach (var item in validationResultsOfChild)
+                    yield return new(item.ErrorMessage, item.MemberNames.Prepend(nameof(Child)));
+
+                var validationResultOfChildren = new List<ValidationResult>();
+
+                var index = 0;
+                foreach (var item in Children)
+                {
+                    validationResultsOfChild.Clear();
+                    Validator.TryValidateObject(item, new(item, null), validationResultsOfChild, true);
+                    validationResultOfChildren.AddRange(
+                        validationResultsOfChild.Select(x => new ValidationResult(x.ErrorMessage, x.MemberNames.Prepend(nameof(Children) + $"[{index}]")))
+                     );
+                    index++;
+                }
+
+                foreach (var item in validationResultOfChildren)
+                    yield return item;
+            }
+        }
 
         public record InvalidRecord
         {
@@ -99,17 +138,25 @@ namespace DataAnnotatedModelValidations.Tests
         }
 
         [ExtendObjectType(nameof(Query))]
-        public class ExtendedQuery : Query { }
+        public class ExtendedQuery : Query
+        {
+            public InvalidRecord GetInvalidRecordExt([Parent] Query parent, InvalidRecord obj) => parent.GetInvalidRecord(obj);
+        }
 
         public class Mutation
         {
             public string? SetText([MinLength(5)] string? txt) => txt;
 
             public Sample? SetSample(Sample? obj) => obj;
+
+            public NestedParent SetNestedParent(NestedParent obj) => obj;
         }
 
         [ExtendObjectType(nameof(Mutation))]
-        public class ExtendedMutation : Mutation { }
+        public class ExtendedMutation : Mutation
+        {
+            public NestedParent SetNestedParentExt([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+        }
 
         [Fact(DisplayName = "No Error when Filter, Sort, And - Or Pagination Definitions Present")]
         public async Task NoErrorFilterSortAndOrPaginationDefinitionsPresent()
@@ -183,6 +230,18 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sampleWithService(obj: { email: \"a@b.com\" }) { email } }", null, "sampleWithService_no_errors")]
         [InlineData("mutation { setSample(obj: { email: \"\" }) { email } }", 1, "setSample_blank_email_required")]
         [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
+        [InlineData(@"mutation { 
+            setNestedParent(obj: { 
+                child: { count: 0 }, 
+                children: [
+                    { count: 1 }, 
+                    { count: 0 }
+                ] 
+            }) { 
+                child { count } 
+                children { count } 
+            } 
+        }", 2, "setNestedParent_nested_validations")]
         public async Task ValidationClassBased(string query, int? numberOfErrors, string description)
         {
             var result =
@@ -203,6 +262,7 @@ namespace DataAnnotatedModelValidations.Tests
 
         [Theory]
         [InlineData("{ invalidRecord(obj: { text: \"test\" }) { text } }", 1, "invalid_record")]
+        [InlineData("{ invalidRecordExt(obj: { text: \"test\" }) { text } }", 1, "invalid_record_ext")]
         [InlineData("{ info }", null, "info")]
         [InlineData("{ text(txt: \"abc\") }", 1, "text_min_length_5")]
         [InlineData("{ textAlias:text(txt: \"abc\") }", 1, "text_alias_min_length_5")]
@@ -226,6 +286,30 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sampleWithService(obj: { email: \"a@b.com\" }) { email } }", null, "sampleWithService_no_errors")]
         [InlineData("mutation { setSample(obj: { email: \"\" }) { email } }", 1, "setSample_blank_email_required")]
         [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
+        [InlineData(@"mutation { 
+            setNestedParent(obj: { 
+                child: { count: 0 }, 
+                children: [
+                    { count: 1 }, 
+                    { count: 0 }
+                ] 
+            }) { 
+                child { count } 
+                children { count } 
+            } 
+        }", 2, "setNestedParent_nested_validations")]
+        [InlineData(@"mutation { 
+            setNestedParentExt(obj: { 
+                child: { count: 0 }, 
+                children: [
+                    { count: 1 }, 
+                    { count: 0 }
+                ] 
+            }) { 
+                child { count } 
+                children { count } 
+            } 
+        }", 2, "setNestedParentExt_nested_validations")]
         public async Task ValidationExtendedBased(string query, int? numberOfErrors, string description)
         {
             var result =

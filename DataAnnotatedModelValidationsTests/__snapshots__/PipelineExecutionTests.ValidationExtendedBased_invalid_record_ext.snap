@@ -1,0 +1,17 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field of type HotChocolate.Optional\u00601[System.String] must be a string, array or ICollection type for validation attribute MaxLengthAttribute",
+      "path": [
+        "invalidRecordExt",
+        "obj"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "invalidRecordExt",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ]
+}
