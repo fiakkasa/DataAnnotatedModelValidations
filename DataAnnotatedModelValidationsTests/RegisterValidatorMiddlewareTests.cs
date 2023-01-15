@@ -1,20 +1,19 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DataAnnotatedModelValidations.Tests
+namespace DataAnnotatedModelValidations.Tests;
+
+public class RegisterValidatorMiddlewareTests
 {
-    public class RegisterValidatorMiddlewareTests
+    [Fact]
+    public void AddDataAnnotationsValidator()
     {
-        [Fact]
-        public void AddDataAnnotationsValidator()
-        {
-            var requestExecutorBuilder = new ServiceCollection().AddGraphQL();
-            var count = requestExecutorBuilder.Services.Count;
+        var requestExecutorBuilder = new ServiceCollection().AddGraphQL();
+        var count = requestExecutorBuilder.Services.Count;
 
-            requestExecutorBuilder.AddDataAnnotationsValidator();
+        requestExecutorBuilder.AddDataAnnotationsValidator();
 
-            // Interceptor + Validator + Previous
-            Assert.Equal(count + 2, requestExecutorBuilder.Services.Count);
-        }
+        // Interceptor + Validator + Previous
+        Assert.Equal(count + 2, requestExecutorBuilder.Services.Count);
     }
 }

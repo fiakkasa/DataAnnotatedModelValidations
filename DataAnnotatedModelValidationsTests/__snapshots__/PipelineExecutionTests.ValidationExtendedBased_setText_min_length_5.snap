@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "The field String must be a string or array type with a minimum length of \u00275\u0027.",
+      "message": "The field txt must be a string or array type with a minimum length of \u00275\u0027.",
       "path": [
         "setText",
         "txt"
