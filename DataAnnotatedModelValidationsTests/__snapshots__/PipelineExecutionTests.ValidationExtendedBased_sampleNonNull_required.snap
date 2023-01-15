@@ -12,7 +12,7 @@
         "type": "Query",
         "field": "sampleNonNull",
         "argument": "obj",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Required-Arguments"
+        "specifiedBy": "http://spec.graphql.org/October2021/#sec-Required-Arguments"
       }
     }
   ]

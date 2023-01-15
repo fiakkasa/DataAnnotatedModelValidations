@@ -5,7 +5,46 @@
       "path": [
         "sample",
         "obj",
-        "hello",
+        "hello"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "multiple-property-names",
+      "path": [
+        "sample",
+        "obj"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "multiple-property-names",
+      "path": [
+        "sample",
+        "obj"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "multiple-property-names",
+      "path": [
+        "sample",
+        "obj",
         "world"
       ],
       "extensions": {

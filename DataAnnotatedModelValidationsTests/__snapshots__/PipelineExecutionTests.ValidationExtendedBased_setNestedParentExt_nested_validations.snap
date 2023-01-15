@@ -5,7 +5,20 @@
       "path": [
         "setNestedParentExt",
         "obj",
-        "child",
+        "child"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParentExt",
+        "type": "Mutation",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParentExt",
+        "obj",
         "count"
       ],
       "extensions": {
@@ -20,7 +33,8 @@
       "path": [
         "setNestedParentExt",
         "obj",
-        "children_1",
+        "children",
+        "_2_",
         "count"
       ],
       "extensions": {

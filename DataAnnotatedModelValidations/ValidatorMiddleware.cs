@@ -1,4 +1,5 @@
-﻿using HotChocolate;
+﻿using System.Diagnostics.CodeAnalysis;
+using HotChocolate;
 using HotChocolate.Resolvers;
 using Humanizer;
 using System;
@@ -11,34 +12,28 @@ using IInputField = HotChocolate.Types.IInputField;
 
 namespace DataAnnotatedModelValidations
 {
-    public class ValidatorMiddleware
+    public partial class ValidatorMiddleware
     {
         private readonly FieldDelegate _next;
 
-        private static readonly Regex _bracketsRegex = new(@"[\[\]]+", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
-        private static readonly Regex _lastUnderscoreRegex = new("_$", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+        private static readonly Regex _bracketsRegex = BracketsRegex();
 
         public ValidatorMiddleware(FieldDelegate next)
         {
             _next = next;
         }
 
-        private static NamePathSegment GenerateArgumentPath(NameString name, List<NameString> contextPath, ValidationResult validationResult) =>
+        private static NamePathSegment GenerateArgumentPath(NameString name, string? memberName, List<NameString> contextPath) =>
             contextPath
                 .Skip(1)
                 .Concat(
-                    (validationResult.MemberNames.FirstOrDefault() is { Length: > 0 }) switch
+                    memberName?.Trim() switch
                     {
-                        true =>
-                            validationResult
-                                .MemberNames
-                                .Select(x => x?.Trim())
-                                .Where(x => x is { Length: > 0 })
+                        { Length: > 0 } trimmedMemberName =>
+                            trimmedMemberName
+                                .Split(':')
                                 .Select(x => new NameString(
-                                        _lastUnderscoreRegex.Replace(
-                                            _bracketsRegex.Replace(x!.Camelize(), "_"),
-                                            string.Empty
-                                        )
+                                        _bracketsRegex.Replace(x!.Camelize(), "_")
                                     )
                                 )
                                 .Prepend(name),
@@ -46,6 +41,24 @@ namespace DataAnnotatedModelValidations
                     }
                 )
                 .Aggregate(Path.New(contextPath[0]), (path, segment) => path.Append(segment));
+
+        private static void ReportError(
+            IMiddlewareContext context,
+            IInputField argument,
+            List<NameString> contextPathList,
+            string? message = default,
+            string? memberName = default
+        ) =>
+            context.ReportError(
+                ErrorBuilder.New()
+                    .SetMessage(message ?? "Unspecified Error")
+                    .SetCode("DAMV-400")
+                    .SetPath(GenerateArgumentPath(argument.Name, memberName, contextPathList))
+                    .SetExtension("field", argument.Coordinate.FieldName)
+                    .SetExtension("type", argument.Coordinate.TypeName)
+                    .SetExtension("specifiedBy", "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
+                    .Build()
+            );
 
         private static Action<IInputField> ReportErrorFactory(IMiddlewareContext context, Path contextPath) =>
             argument =>
@@ -69,16 +82,14 @@ namespace DataAnnotatedModelValidations
 
                 foreach (var validationResult in validationResults)
                 {
-                    context.ReportError(
-                        ErrorBuilder.New()
-                            .SetMessage(validationResult.ErrorMessage ?? "Unspecified Error")
-                            .SetCode("DAMV-400")
-                            .SetPath(GenerateArgumentPath(argument.Name, contextPathList, validationResult))
-                            .SetExtension("field", argument.Coordinate.FieldName)
-                            .SetExtension("type", argument.Coordinate.TypeName)
-                            .SetExtension("specifiedBy", "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
-                            .Build()
-                    );
+                    if (!validationResult.MemberNames.Any())
+                    {
+                        ReportError(context, argument, contextPathList, validationResult.ErrorMessage);
+                        continue;
+                    }
+
+                    foreach (var memberName in validationResult.MemberNames)
+                        ReportError(context, argument, contextPathList, validationResult.ErrorMessage, memberName);
                 }
 
                 validationResults.Clear();
@@ -129,5 +140,9 @@ namespace DataAnnotatedModelValidations
             if (!context.HasErrors)
                 await _next(context).ConfigureAwait(false);
         }
+
+        [ExcludeFromCodeCoverage]
+        [GeneratedRegex("[\\[\\]]+", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled)]
+        private static partial Regex BracketsRegex();
     }
 }

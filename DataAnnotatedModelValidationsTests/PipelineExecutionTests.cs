@@ -72,7 +72,7 @@ namespace DataAnnotatedModelValidations.Tests
                     validationResultsOfChild.Clear();
                     Validator.TryValidateObject(item, new(item, null), validationResultsOfChild, true);
                     validationResultOfChildren.AddRange(
-                        validationResultsOfChild.Select(x => new ValidationResult(x.ErrorMessage, x.MemberNames.Prepend(nameof(Children) + $"[{index}]")))
+                        validationResultsOfChild.Select(x => new ValidationResult(x.ErrorMessage, x.MemberNames.Select(x => $"{nameof(Children)}:[{index}]:{x}")))
                      );
                     index++;
                 }
@@ -219,7 +219,7 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sample(obj: { email: \"ab\" }) { email } }", 2, "sample_min_length_3_and_valid_email")]
         [InlineData("{ sample(obj: { email: \"no-property-name@b.com\" }) { email } }", 1, "sample_no-property-name_custom_validation")]
         [InlineData("{ sample(obj: { email: \"empty-property-name@b.com\" }) { email } }", 1, "sample_empty-property-name_custom_validation")]
-        [InlineData("{ sample(obj: { email: \"multiple-property-names@b.com\" }) { email } }", 1, "sample_multiple-property-names_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"multiple-property-names@b.com\" }) { email } }", 4, "sample_multiple-property-names_custom_validation")]
         [InlineData("{ sample(obj: { email: \"null-error-message@b.com\" }) { email } }", 1, "sample_null-error-message_custom_validation")]
         [InlineData("{ sample(obj: { email: \"message-from-service@b.com\" }) { email } }", 1, "sample_message-from-service_custom_validation")]
         [InlineData("{ sample(obj: { email: \"a@b.com\" }) { email } }", null, "sample_no_errors")]
@@ -241,7 +241,7 @@ namespace DataAnnotatedModelValidations.Tests
                 child { count } 
                 children { count } 
             } 
-        }", 2, "setNestedParent_nested_validations")]
+        }", 3, "setNestedParent_nested_validations")]
         public async Task ValidationClassBased(string query, int? numberOfErrors, string description)
         {
             var result =
@@ -275,7 +275,7 @@ namespace DataAnnotatedModelValidations.Tests
         [InlineData("{ sample(obj: { email: \"ab\" }) { email } }", 2, "sample_min_length_3_and_valid_email")]
         [InlineData("{ sample(obj: { email: \"no-property-name@b.com\" }) { email } }", 1, "sample_no-property-name_custom_validation")]
         [InlineData("{ sample(obj: { email: \"empty-property-name@b.com\" }) { email } }", 1, "sample_empty-property-name_custom_validation")]
-        [InlineData("{ sample(obj: { email: \"multiple-property-names@b.com\" }) { email } }", 1, "sample_multiple-property-names_custom_validation")]
+        [InlineData("{ sample(obj: { email: \"multiple-property-names@b.com\" }) { email } }", 4, "sample_multiple-property-names_custom_validation")]
         [InlineData("{ sample(obj: { email: \"null-error-message@b.com\" }) { email } }", 1, "sample_null-error-message_custom_validation")]
         [InlineData("{ sample(obj: { email: \"message-from-service@b.com\" }) { email } }", 1, "sample_message-from-service_custom_validation")]
         [InlineData("{ sample(obj: { email: \"a@b.com\" }) { email } }", null, "sample_no_errors")]
@@ -297,7 +297,7 @@ namespace DataAnnotatedModelValidations.Tests
                 child { count } 
                 children { count } 
             } 
-        }", 2, "setNestedParent_nested_validations")]
+        }", 3, "setNestedParent_nested_validations")]
         [InlineData(@"mutation { 
             setNestedParentExt(obj: { 
                 child: { count: 0 }, 
@@ -309,7 +309,7 @@ namespace DataAnnotatedModelValidations.Tests
                 child { count } 
                 children { count } 
             } 
-        }", 2, "setNestedParentExt_nested_validations")]
+        }", 3, "setNestedParentExt_nested_validations")]
         public async Task ValidationExtendedBased(string query, int? numberOfErrors, string description)
         {
             var result =

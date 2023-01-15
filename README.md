@@ -76,9 +76,68 @@ public class Sample : IValidatableObject
 }
 ```
 
+### Numerical sequences
+
 If you need to support numerical sequences in your validation results, consider adding the names as `FieldName[index]`.
 
-The field name will be transformed in the error path as `fieldName_index`.
+The field name will be transformed in the error path as `fieldName,_index_`.
+
+```json
+{
+  "errors": [
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": ["sample", "obj", "children", "_2_", "count"],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Mutation",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ]
+}
+```
+
+### Multiple members
+
+If multiple member names are added they will be treated as distinct error messages.
+
+Ex. validation error '"Some validation error!"' was assigned to properties hello and world:
+
+```json
+{
+  "errors": [
+    {
+      "message": "Some validation error!",
+      "path": ["sample", "obj", "hello"],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "Some validation error!",
+      "path": ["sample", "obj", "world"],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sample",
+        "type": "Query",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "sample": null
+  }
+}
+```
+
+### Property nesting
+
+If there is a need to express a nested relationship of a property and it's parent, consider adding the names separated by a colon as `ParentName:FieldName:[index]`
 
 ## Similar Projects
 
