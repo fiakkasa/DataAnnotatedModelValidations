@@ -106,10 +106,10 @@ If you choose to omit the `:` character and add the names as `FieldName[index]` 
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "path": ["setNestedParent", "obj", "children_2_", "count"],
+      "path": ["sample", "obj", "children_2_", "count"],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setNestedParent",
+        "field": "sample",
         "type": "Mutation",
         "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
