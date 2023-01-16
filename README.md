@@ -99,6 +99,25 @@ The field name will be transformed in the error path as `fieldName,_index_`.
 }
 ```
 
+If you choose to omit the `:` character and add the names as `FieldName[index]` the field name and the index will be represented as one entry, `fieldName_index_`.
+
+```json
+{
+  "errors": [
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": ["setNestedParent", "obj", "children_2_", "count"],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParent",
+        "type": "Mutation",
+        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ]
+}
+```
+
 ### Multiple members
 
 If multiple member names are added they will be treated as distinct error messages.
