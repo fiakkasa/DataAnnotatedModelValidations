@@ -78,7 +78,7 @@ public class Sample : IValidatableObject
 
 ### Numerical sequences
 
-If you need to support numerical sequences in your validation results, consider adding the names as `FieldName[index]`.
+If you need to support numerical sequences in your validation results, consider adding the names as `FieldName:[index]`.
 
 The field name will be transformed in the error path as `fieldName,_index_`.
 
