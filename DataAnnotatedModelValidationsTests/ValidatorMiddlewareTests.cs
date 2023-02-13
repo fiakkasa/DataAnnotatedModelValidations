@@ -1,4 +1,5 @@
 ﻿using HotChocolate;
+using HotChocolate.Execution;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using Moq;
@@ -50,7 +51,7 @@ public class ValidatorMiddlewareTests
             .SetupGet(p => p.Selection.Field)
             .Returns(mockField.Object);
         mockContext.SetupGet(p => p.Path)
-            .Returns(Path.New(new NameString("path")));
+            .Returns(PathFactory.Instance.New(new string("path")));
 
         await middleware.InvokeAsync(mockContext.Object).ConfigureAwait(false);
         mockFieldDelegate.Verify();

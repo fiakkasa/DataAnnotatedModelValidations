@@ -201,8 +201,8 @@ public class PipelineExecutionTests
                 .ExecuteRequestAsync(query)
                 .ConfigureAwait(true);
 
-        Assert.Null(result.Errors);
-        (await result.ToJsonAsync().ConfigureAwait(false)).MatchSnapshot();
+        Assert.Null(result.ExpectQueryResult().Errors);
+        result.ExpectQueryResult().ToJson().MatchSnapshot();
     }
 
     [Theory]
@@ -256,8 +256,8 @@ public class PipelineExecutionTests
                 .ExecuteRequestAsync(query)
                 .ConfigureAwait(true);
 
-        Assert.Equal(numberOfErrors, result.Errors?.Count);
-        (await result.ToJsonAsync().ConfigureAwait(false)).MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
+        Assert.Equal(numberOfErrors, result.ExpectQueryResult().Errors?.Count);
+        result.ExpectQueryResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
 
     [Theory]
@@ -326,8 +326,8 @@ public class PipelineExecutionTests
                 .ExecuteRequestAsync(query)
                 .ConfigureAwait(true);
 
-        Assert.Equal(numberOfErrors, result.Errors?.Count);
-        (await result.ToJsonAsync().ConfigureAwait(false)).MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
+        Assert.Equal(numberOfErrors, result.ExpectQueryResult().Errors?.Count);
+        result.ExpectQueryResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
 }
 #pragma warning restore CA1822 // Mark members as static

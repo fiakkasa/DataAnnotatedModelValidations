@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using IInputField = HotChocolate.Types.IInputField;
+using HotChocolate.Execution;
 
 namespace DataAnnotatedModelValidations;
 
@@ -20,13 +21,13 @@ public partial class ValidatorMiddleware
 
     public ValidatorMiddleware(FieldDelegate next) => _next = next;
 
-    private static NameString MemberNameToNameString(string memberName) =>
+    private static string MemberNameToNameString(string memberName) =>
         new(_bracketsRegex.Replace(memberName.Camelize(), "_"));
 
     private static NamePathSegment GenerateArgumentPath(
-        NameString name,
+        string name,
         string? memberName,
-        List<NameString> contextPath,
+        List<string> contextPath,
         bool? valueValidation
     ) =>
         contextPath
@@ -46,12 +47,12 @@ public partial class ValidatorMiddleware
                     _ => name.ToEnumerable()
                 }
             )
-            .Aggregate(Path.New(contextPath[0]), (path, segment) => path.Append(segment));
+            .Aggregate(PathFactory.Instance.New(contextPath[0]), PathFactory.Instance.Append);
 
     private static void ReportError(
         IMiddlewareContext context,
         IInputField argument,
-        List<NameString> contextPathList,
+        List<string> contextPathList,
         bool? valueValidation,
         string? message = default,
         string? memberName = default
@@ -91,7 +92,7 @@ public partial class ValidatorMiddleware
             var contextPathList =
                 contextPath
                     .ToList()
-                    .OfType<NameString>()
+                    .OfType<string>()
                     .ToList();
 
             foreach (var validationResult in validationResults)
