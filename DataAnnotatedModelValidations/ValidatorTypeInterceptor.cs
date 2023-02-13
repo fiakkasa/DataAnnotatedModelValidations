@@ -8,7 +8,7 @@ namespace DataAnnotatedModelValidations;
 
 public class ValidatorTypeInterceptor : TypeInterceptor
 {
-    public override void OnBeforeCompleteType(ITypeCompletionContext completionContext, DefinitionBase? definition, IDictionary<string, object?> contextData)
+    public override void OnBeforeCompleteType(ITypeCompletionContext completionContext, DefinitionBase? definition)
     {
         if (definition is not ObjectTypeDefinition objectTypeDefinition)
             return;

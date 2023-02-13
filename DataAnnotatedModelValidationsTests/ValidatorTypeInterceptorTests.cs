@@ -37,8 +37,7 @@ public class ValidatorTypeInterceptorTests
     private void Act() =>
         interceptor.OnBeforeCompleteType(
             mockTypeCompletionContext.Object,
-            definition,
-            contextData
+            definition
         );
 
     [Fact(DisplayName = "OnBeforeCompleteType - With Null Parameters - Ignore")]
