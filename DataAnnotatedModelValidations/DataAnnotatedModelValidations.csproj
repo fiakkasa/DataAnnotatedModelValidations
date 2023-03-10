@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>$(MSBuildProjectName)</PackageId>
-    <Version>4.0.0</Version>
+    <Version>4.0.1</Version>
     <Authors>Adamos Fiakkas</Authors>
     <Description>Data Annotated Model Validation Middleware for HotChocolate</Description>
     <Copyright>Adamos Fiakkas</Copyright>
