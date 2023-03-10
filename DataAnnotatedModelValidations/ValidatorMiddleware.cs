@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#if NET7_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using HotChocolate;
 using HotChocolate.Resolvers;
 using Humanizer;
@@ -17,7 +19,11 @@ public partial class ValidatorMiddleware
 {
     private readonly FieldDelegate _next;
 
+#if NET7_0_OR_GREATER
     private static readonly Regex _bracketsRegex = BracketsRegex();
+#else
+    private static readonly Regex _bracketsRegex = new Regex("[\\[\\]]+", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+#endif
 
     public ValidatorMiddleware(FieldDelegate next) => _next = next;
 
@@ -196,7 +202,9 @@ public partial class ValidatorMiddleware
             await _next(context).ConfigureAwait(false);
     }
 
+#if NET7_0_OR_GREATER
     [ExcludeFromCodeCoverage]
     [GeneratedRegex("[\\[\\]]+", RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture | RegexOptions.Compiled)]
     private static partial Regex BracketsRegex();
+#endif
 }
