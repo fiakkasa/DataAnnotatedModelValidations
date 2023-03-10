@@ -21,3 +21,4 @@ dotnet reportgenerator -reports:./coverage.cobertura.xml -targetdir:./TestResult
 
 - https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/MSBuildIntegration.md
 - https://github.com/danielpalme/ReportGenerator
+
