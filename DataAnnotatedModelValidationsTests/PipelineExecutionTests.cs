@@ -16,6 +16,21 @@ namespace DataAnnotatedModelValidations.Tests;
 
 public class PipelineExecutionTests
 {
+    public record SampleRecordInline(
+        [property:Required]
+        [property:MinLength(3)]
+        [property:EmailAddress]
+        string? Email
+    );
+
+    public record SampleRecord
+    {
+        [Required]
+        [MinLength(3)]
+        [EmailAddress]
+        public string? Email { get; set; }
+    }
+
     public class Sample : IValidatableObject
     {
         [Required]
@@ -42,6 +57,7 @@ public class PipelineExecutionTests
                 yield return new(validationContext.GetRequiredService<MockService>().Message);
         }
     }
+
     public record NestedChild
     {
         [Range(1, 10)]
@@ -150,6 +166,10 @@ public class PipelineExecutionTests
         public Sample? SetSample(Sample? obj) => obj;
 
         public NestedParent SetNestedParent(NestedParent obj) => obj;
+
+        public SampleRecord? SetSampleRecord(SampleRecord? obj) => obj;
+
+        public SampleRecordInline? SetSampleRecordInline(SampleRecordInline? obj) => obj;
     }
 
     [ExtendObjectType(nameof(Mutation))]
@@ -229,6 +249,8 @@ public class PipelineExecutionTests
     [InlineData("{ sampleWithService(obj: { email: \"abc\" }) { email } }", 1, "sampleWithService_valid_email")]
     [InlineData("{ sampleWithService(obj: { email: \"a@b.com\" }) { email } }", null, "sampleWithService_no_errors")]
     [InlineData("mutation { setSample(obj: { email: \"\" }) { email } }", 1, "setSample_blank_email_required")]
+    [InlineData("mutation { setSampleRecord(obj: { email: \"\" }) { email } }", 1, "setSampleRecord_blank_email_required")]
+    [InlineData("mutation { setSampleRecordInline(obj: { email: \"\" }) { email } }", 1, "setSampleRecordInline_blank_email_required")]
     [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
     [InlineData(@"mutation { 
             setNestedParent(obj: { 
@@ -285,6 +307,8 @@ public class PipelineExecutionTests
     [InlineData("{ sampleWithService(obj: { email: \"abc\" }) { email } }", 1, "sampleWithService_valid_email")]
     [InlineData("{ sampleWithService(obj: { email: \"a@b.com\" }) { email } }", null, "sampleWithService_no_errors")]
     [InlineData("mutation { setSample(obj: { email: \"\" }) { email } }", 1, "setSample_blank_email_required")]
+    [InlineData("mutation { setSampleRecord(obj: { email: \"\" }) { email } }", 1, "setSampleRecord_blank_email_required")]
+    [InlineData("mutation { setSampleRecordInline(obj: { email: \"\" }) { email } }", 1, "setSampleRecordInline_blank_email_required")]
     [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
     [InlineData(@"mutation { 
             setNestedParent(obj: { 
