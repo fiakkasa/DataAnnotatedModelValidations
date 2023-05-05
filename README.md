@@ -54,6 +54,53 @@ public class Query
 }
 ```
 
+### Models
+
+In C# one may define models in a multitude of ways.
+
+To help alleviate potential issues consider the following:
+
+#### Standard Classes
+
+```csharp
+public class Sample
+{
+    [Required]
+    [MinLength(3)]
+    [EmailAddress]
+    public string? Email { get; set; }
+}
+```
+
+#### Records with declared properties
+
+```csharp
+public record Sample
+{
+    [Required]
+    [MinLength(3)]
+    [EmailAddress]
+    public string? Email { get; set; }
+}
+```
+
+#### Records with auto synthesized properties
+
+> The auto-property is initialized to the value of the corresponding primary constructor parameter. Attributes can be applied to the synthesized auto-property and its backing field by using `property:` or `field:` targets for attributes syntactically applied to the corresponding record parameter.
+
+https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/records
+
+So per the documentation and following the guideline, a solution to the challenge mentioned would be adding the `property:` prefix to the validation attribute.
+
+```csharp
+public record Sample(
+    [property:Required]
+    [property:MinLength(3)]
+    [property:EmailAddress]
+    string? Email
+);
+```
+
 ## Notes
 
 When implementing the `IValidatableObject` interface HotChocolate considers the Validate as a resolver; to avoid getting schema errors said method needs to be ignored.
