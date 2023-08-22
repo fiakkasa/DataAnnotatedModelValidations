@@ -12,6 +12,10 @@ In addition individual method arguments can be validated using annotations from 
 
 [Nuget](https://www.nuget.org/packages/DataAnnotatedModelValidations/)
 
+## Note
+
+⚠️ For HC 13.5 and up please use version 4.1 and up.
+
 ## Usage
 
 Locate your GraphQL Server registration and append `.AddDataAnnotationsValidator()`
