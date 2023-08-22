@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace DataAnnotatedModelValidations;
 
-public static class Extensions
+internal static class Extensions
 {
-    public static IEnumerable<T> ToEnumerable<T>(this T value)
+    internal static IEnumerable<T> AsEnumerable<T>(this T value)
     {
         yield return value;
     }

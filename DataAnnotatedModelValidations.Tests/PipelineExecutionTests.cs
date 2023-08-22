@@ -3,13 +3,10 @@ using HotChocolate.Data;
 using HotChocolate.Execution;
 using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
-using Snapshooter;
-using Snapshooter.Xunit;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
 
 #pragma warning disable CA1822 // Mark members as static
 namespace DataAnnotatedModelValidations.Tests;

@@ -1,11 +1,9 @@
 ﻿using HotChocolate.Configuration;
 using HotChocolate.Types.Descriptors.Definitions;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using Xunit;
 
 namespace DataAnnotatedModelValidations.Tests;
 

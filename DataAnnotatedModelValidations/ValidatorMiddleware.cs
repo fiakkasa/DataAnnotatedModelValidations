@@ -30,14 +30,13 @@ public partial class ValidatorMiddleware
     private static string MemberNameToNameString(string memberName) =>
         new(_bracketsRegex.Replace(memberName.Camelize(), "_"));
 
-    private static NamePathSegment GenerateArgumentPath(
+    private static Path? GenerateArgumentPath(
         string name,
         string? memberName,
         List<string> contextPath,
         bool? valueValidation
     ) =>
         contextPath
-            .Skip(1)
             .Concat(
                 (memberName?.Trim(), valueValidation) switch
                 {
@@ -50,10 +49,10 @@ public partial class ValidatorMiddleware
                             .Split(':')
                             .Select(MemberNameToNameString)
                             .Prepend(name),
-                    _ => name.ToEnumerable()
+                    _ => name.AsEnumerable()
                 }
             )
-            .Aggregate(PathFactory.Instance.New(contextPath[0]), PathFactory.Instance.Append);
+            .Aggregate(Path.Root, (acc, item) => acc = acc.Append(item));
 
     private static void ReportError(
         IMiddlewareContext context,
