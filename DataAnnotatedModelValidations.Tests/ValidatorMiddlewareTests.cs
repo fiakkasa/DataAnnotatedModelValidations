@@ -26,7 +26,7 @@ public class ValidatorMiddlewareTests
             .SetupGet(p => p.Selection.Field)
             .Returns(new Mock<IObjectField>().Object);
 
-        await middleware.InvokeAsync(mockContext.Object).ConfigureAwait(false);
+        await middleware.InvokeAsync(mockContext.Object);
         mockFieldDelegate.Verify();
     }
 
@@ -50,7 +50,7 @@ public class ValidatorMiddlewareTests
         mockContext.SetupGet(p => p.Path)
             .Returns(Path.Root.Append("path"));
 
-        await middleware.InvokeAsync(mockContext.Object).ConfigureAwait(false);
+        await middleware.InvokeAsync(mockContext.Object);
         mockFieldDelegate.Verify();
 
         static IEnumerator<IInputField> MockEnumerator()
