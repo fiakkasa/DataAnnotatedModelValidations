@@ -8,13 +8,13 @@
 ## Tests
 
 - Run: `dotnet test /p:CollectCoverage=true /p:Threshold=80 /p:CoverletOutputFormat=cobertura /p:CoverletOutput='./coverage.cobertura.xml'`
-- Report: `dotnet reportgenerator -reports:./coverage.cobertura.xml -targetdir:./TestResults -reporttypes:Html`
+- Report: `dotnet reportgenerator -reports:./coverage.cobertura.net8.0.xml -targetdir:./TestResults -reporttypes:Html`
 
 In one Go!
 
 ```powershell
-dotnet test /p:CollectCoverage=true /p:Threshold=80 /p:CoverletOutputFormat=cobertura /p:CoverletOutput='./coverage.cobertura.xml'
-dotnet reportgenerator -reports:./coverage.cobertura.xml -targetdir:./TestResults -reporttypes:Html
+dotnet test /p:CollectCoverage=true /p:Threshold=0 /p:CoverletOutputFormat=cobertura /p:CoverletOutput='./coverage.cobertura.xml'
+dotnet reportgenerator -reports:./coverage.cobertura.net8.0.xml -targetdir:./TestResults -reporttypes:Html
 ```
 
 ## Info

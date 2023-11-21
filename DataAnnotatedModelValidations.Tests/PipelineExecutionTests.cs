@@ -1,4 +1,5 @@
-﻿using HotChocolate;
+﻿using DataAnnotatedModelValidations.Attributes;
+using HotChocolate;
 using HotChocolate.Data;
 using HotChocolate.Execution;
 using HotChocolate.Types;

@@ -2,7 +2,7 @@
 
 namespace DataAnnotatedModelValidations.Tests;
 
-public class RegisterValidatorMiddlewareTests
+public class DataAnnotationsValidatorRegistrationTests
 {
     [Fact]
     public void AddDataAnnotationsValidator()

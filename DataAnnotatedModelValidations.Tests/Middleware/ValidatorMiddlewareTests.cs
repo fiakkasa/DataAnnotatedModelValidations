@@ -1,4 +1,5 @@
-﻿using HotChocolate;
+﻿using DataAnnotatedModelValidations.Middleware;
+using HotChocolate;
 using HotChocolate.Resolvers;
 using HotChocolate.Types;
 using System.Collections.Generic;
