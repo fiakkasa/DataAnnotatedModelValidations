@@ -1,7 +1,8 @@
-﻿using HotChocolate.Configuration;
+﻿using DataAnnotatedModelValidations.Attributes;
+using DataAnnotatedModelValidations.TypeInterceptors;
+using HotChocolate.Configuration;
 using HotChocolate.Types.Descriptors.Definitions;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
@@ -14,7 +15,6 @@ public class ValidatorTypeInterceptorTests
     private readonly ObjectTypeDefinition definition;
     private readonly ArgumentDefinition argument;
     private readonly Mock<ITypeCompletionContext> mockTypeCompletionContext = new();
-    private readonly Dictionary<string, object?> contextData = new();
 
     public ValidatorTypeInterceptorTests()
     {

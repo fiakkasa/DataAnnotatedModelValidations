@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace DataAnnotatedModelValidations;
+namespace DataAnnotatedModelValidations.Extensions;
 
-internal static class Extensions
+internal static class CollectionExtensions
 {
     internal static IEnumerable<T> AsEnumerable<T>(this T value)
     {

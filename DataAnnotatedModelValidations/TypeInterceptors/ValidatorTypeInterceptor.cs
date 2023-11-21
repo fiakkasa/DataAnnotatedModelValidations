@@ -1,10 +1,10 @@
-﻿using HotChocolate.Configuration;
+﻿using DataAnnotatedModelValidations.Attributes;
+using HotChocolate.Configuration;
 using HotChocolate.Types.Descriptors.Definitions;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace DataAnnotatedModelValidations;
+namespace DataAnnotatedModelValidations.TypeInterceptors;
 
 public class ValidatorTypeInterceptor : TypeInterceptor
 {
