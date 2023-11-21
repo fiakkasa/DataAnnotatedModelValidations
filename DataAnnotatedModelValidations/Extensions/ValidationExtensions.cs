@@ -71,12 +71,13 @@ internal static class ValidationExtensions
 
             var validationResults = new List<ValidationResult>();
 
-            var (success, valueValidation) = argument.ContextData.ValidateItem(
-                item,
-                argument.Name,
-                context.Services,
-                validationResults
-            );
+            var (success, valueValidation) = 
+                argument.ContextData.ValidateItem(
+                    item,
+                    argument.Name,
+                    context.Services,
+                    validationResults
+                );
 
             if (success)
             {

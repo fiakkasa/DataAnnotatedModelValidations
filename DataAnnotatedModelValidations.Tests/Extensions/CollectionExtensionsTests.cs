@@ -5,6 +5,7 @@ namespace DataAnnotatedModelValidations.Tests;
 
 public class CollectionExtensionsTests
 {
-    [Fact(DisplayName = "AsEnumerable - Enumerate Value")]
-    public void EnumerateValue() => Assert.Contains("test", "test".AsEnumerable());
+    [Fact]
+    public void AsEnumerable_Enumerates_A_Value_Once() => 
+        Assert.Single("test".AsEnumerable().Take(10));
 }

@@ -11,17 +11,17 @@ namespace DataAnnotatedModelValidations.Extensions;
 
 internal static class ReportingExtensions
 {
-    private static readonly Regex _bracketsRegex = RegexUtils.BracketsRegex();
+    private static readonly Regex _bracketsRegex = RegexUtils.GetBracketsRegex();
 
-    private static string GetNormalizedMemberName(string memberName) =>
+    internal static string GetNormalizedMemberName(this string memberName) =>
         _bracketsRegex.Replace(memberName.Camelize(), "_");
 
-    private static IEnumerable<string> ToTokenizedMemberNames(this string trimmedMemberName) =>
+    internal static IEnumerable<string> ToTokenizedMemberNames(this string trimmedMemberName) =>
         trimmedMemberName
             .Split(':')
             .Select(GetNormalizedMemberName);
 
-    private static IEnumerable<string> ToComposedMemberNames(
+    internal static IEnumerable<string> ToComposedMemberNames(
         this IInputField argument,
         string? memberName,
         bool? valueValidation
@@ -35,7 +35,7 @@ internal static class ReportingExtensions
             _ => argument.Name.AsEnumerable()
         };
 
-    private static Path ToArgumentPath(this List<string> contextPath, IEnumerable<string> composedMemberNames) =>
+    internal static Path ToArgumentPath(this List<string> contextPath, IEnumerable<string> composedMemberNames) =>
         contextPath
             .Concat(composedMemberNames)
             .Aggregate(Path.Root, (acc, item) => acc.Append(item));

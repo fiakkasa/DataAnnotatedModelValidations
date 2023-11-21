@@ -1,34 +1,41 @@
 ﻿using DataAnnotatedModelValidations.Attributes;
 using HotChocolate.Configuration;
 using HotChocolate.Types.Descriptors.Definitions;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
 
-public class ValidatorTypeInterceptor : TypeInterceptor
+public sealed class ValidatorTypeInterceptor : TypeInterceptor
 {
+    private readonly static Type _ignoreType = typeof(IgnoreModelValidationAttribute);
+    private readonly static Type _validationType = typeof(ValidationAttribute);
+
     public override void OnBeforeCompleteType(ITypeCompletionContext completionContext, DefinitionBase? definition)
     {
-        if (definition is not ObjectTypeDefinition objectTypeDefinition)
+        if (definition is not ObjectTypeDefinition { Fields: { Count: > 0 } fields })
             return;
 
-        foreach (var field in objectTypeDefinition.Fields)
-        {
-            foreach (var argument in field.Arguments.Where(argument => argument is { Parameter: { } }))
-            {
-                if (
-                    argument.Parameter!.IsDefined(typeof(IgnoreModelValidationAttribute), true)
-                    || argument.Parameter!.ParameterType.IsDefined(typeof(IgnoreModelValidationAttribute), true)
-                )
-                {
-                    argument.ContextData[nameof(IgnoreModelValidationAttribute)] = true;
-                    continue;
-                }
+        var collection = 
+            fields
+                .Where(field => field.Arguments.Count > 0)
+                .SelectMany(field => field.Arguments)
+                .Where(arg => arg is { Parameter: { } });
 
-                if (argument.Parameter!.GetCustomAttributes(typeof(ValidationAttribute), true) is { Length: > 0 } attributes)
-                    argument.ContextData[nameof(ValidationAttribute)] = attributes;
+        foreach (var argument in collection)
+        {
+            if (
+                argument.Parameter!.IsDefined(_ignoreType, true)
+                || argument.Parameter!.ParameterType.IsDefined(_ignoreType, true)
+            )
+            {
+                argument.ContextData[nameof(IgnoreModelValidationAttribute)] = true;
+                continue;
             }
+
+            if (argument.Parameter!.GetCustomAttributes(_validationType, true) is { Length: > 0 } attributes)
+                argument.ContextData[nameof(ValidationAttribute)] = attributes;
         }
     }
 }
