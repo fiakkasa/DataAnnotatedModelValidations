@@ -35,7 +35,7 @@ internal static class ReportingExtensions
             _ => argument.Name.AsEnumerable()
         };
 
-    internal static Path ToArgumentPath(this List<string> contextPath, IEnumerable<string> composedMemberNames) =>
+    internal static Path ToArgumentPath(this IReadOnlyCollection<string> contextPath, IEnumerable<string> composedMemberNames) =>
         contextPath
             .Concat(composedMemberNames)
             .Aggregate(Path.Root, (acc, item) => acc.Append(item));
@@ -43,7 +43,7 @@ internal static class ReportingExtensions
     internal static void ReportError(
         this IMiddlewareContext context,
         IInputField argument,
-        List<string> contextPathList,
+        IReadOnlyCollection<string> contextPathList,
         bool? valueValidation,
         string? message = default,
         string? memberName = default

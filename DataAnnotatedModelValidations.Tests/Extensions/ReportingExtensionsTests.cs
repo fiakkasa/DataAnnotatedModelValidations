@@ -63,7 +63,7 @@ public class ReportingExtensionsTests
 
         context.ReportError(
             _argument,
-            new() { "hello" },
+            new [] { "hello" },
             default,
             "world",
             default
@@ -90,7 +90,7 @@ public class ReportingExtensionsTests
 
         context.ReportError(
             _argument,
-            new() { "hello" },
+            new [] { "hello" },
             default,
             default,
             "member"
