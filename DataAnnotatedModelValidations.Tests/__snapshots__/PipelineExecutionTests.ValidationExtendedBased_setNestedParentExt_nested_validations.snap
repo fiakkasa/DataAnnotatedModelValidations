@@ -44,5 +44,6 @@
         "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
-  ]
+  ],
+  "data": null
 }

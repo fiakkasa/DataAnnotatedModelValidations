@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "The argument \u0060obj\u0060 is required.",
+      "message": "The argument `obj` is required.",
       "locations": [
         {
           "line": 1,

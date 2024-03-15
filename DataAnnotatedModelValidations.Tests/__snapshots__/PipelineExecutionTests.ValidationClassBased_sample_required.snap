@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "\u0060email\u0060 is a required field and cannot be null.",
+      "message": "`email` is a required field and cannot be null.",
       "locations": [
         {
           "line": 1,
