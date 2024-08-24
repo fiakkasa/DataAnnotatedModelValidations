@@ -2,6 +2,12 @@
   "errors": [
     {
       "message": "The Email field is required.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 12
+        }
+      ],
       "path": [
         "setSampleRecord",
         "obj",
@@ -11,7 +17,7 @@
         "code": "DAMV-400",
         "field": "setSampleRecord",
         "type": "Mutation",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],

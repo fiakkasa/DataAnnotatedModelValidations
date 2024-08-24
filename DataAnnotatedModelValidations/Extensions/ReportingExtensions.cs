@@ -57,9 +57,9 @@ internal static class ReportingExtensions
                         argument.ToComposedMemberNames(memberName, valueValidation)
                     )
                 )
-                .SetExtension("field", argument.Coordinate.FieldName)
-                .SetExtension("type", argument.Coordinate.TypeName)
-                .SetExtension("specifiedBy", "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
+                .SetExtension("field", argument.Coordinate.MemberName)
+                .SetExtension("type", argument.DeclaringType.Name)
+                .SetExtension("specifiedBy", "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
                 .Build()
         );
 }

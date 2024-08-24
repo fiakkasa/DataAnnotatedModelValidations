@@ -146,7 +146,7 @@ public class PipelineExecutionTests
         [UseOffsetPaging]
         [UseSorting]
         [UseFiltering]
-        public IQueryable<Sample> Samples => new Sample[] { new() }.AsQueryable();
+        public IQueryable<Sample> Samples => new Sample[] { new() { Email = "a@a.com" } }.AsQueryable();
 
         public InvalidRecord GetInvalidRecord(InvalidRecord obj) => obj;
     }
@@ -207,17 +207,25 @@ public class PipelineExecutionTests
         } 
     } 
 }";
-        var result =
+        var requestExecutor =
             await new ServiceCollection()
                 .AddSingleton<MockService>()
                 .AddGraphQLServer()
+                .ModifyPagingOptions(options =>
+                {
+                    options.RequirePagingBoundaries = false;
+                    options.DefaultPageSize = 10;
+                    options.MaxPageSize = 100;
+                })
+                .ModifyCostOptions(options => options.EnforceCostLimits = false)
                 .AddDataAnnotationsValidator()
                 .AddQueryType<Query>()
                 .AddTypeExtension<SampleExtension>()
                 .AddSorting()
                 .AddFiltering()
-                .ExecuteRequestAsync(query)
-                .ConfigureAwait(true);
+                .BuildRequestExecutorAsync();
+
+        var result = await requestExecutor.ExecuteAsync(query);
 
         Assert.Null(result.ExpectQueryResult().Errors);
         result.ExpectQueryResult().ToJson().MatchSnapshot();

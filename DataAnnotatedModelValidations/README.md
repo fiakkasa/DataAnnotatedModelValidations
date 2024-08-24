@@ -133,7 +133,7 @@ The field name will be transformed in the error path as `fieldName,_index_`.
         "code": "DAMV-400",
         "field": "sample",
         "type": "Mutation",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ]
@@ -152,7 +152,7 @@ If you choose to omit the `:` character and add the names as `FieldName[index]` 
         "code": "DAMV-400",
         "field": "sample",
         "type": "Mutation",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ]
@@ -175,7 +175,7 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
         "code": "DAMV-400",
         "field": "sample",
         "type": "Query",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     },
     {
@@ -185,7 +185,7 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
         "code": "DAMV-400",
         "field": "sample",
         "type": "Query",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],

@@ -2,6 +2,12 @@
   "errors": [
     {
       "message": "The field txt must be a string or array type with a minimum length of '5'.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 12
+        }
+      ],
       "path": [
         "setText",
         "txt"
@@ -10,7 +16,7 @@
         "code": "DAMV-400",
         "field": "setText",
         "type": "Mutation",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
