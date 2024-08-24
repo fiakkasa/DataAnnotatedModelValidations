@@ -7,7 +7,8 @@
 
 ## Tests
 
-- Run: `dotnet test /p:CollectCoverage=true /p:Threshold=80 /p:CoverletOutputFormat=cobertura /p:CoverletOutput='../coverage.cobertura.xml'` /p:ExcludeByAttribute="GeneratedCodeAttribute"
+- Run:
+  `dotnet test /p:CollectCoverage=true /p:Threshold=80 /p:CoverletOutputFormat=cobertura /p:CoverletOutput='../coverage.cobertura.xml' /p:ExcludeByAttribute="GeneratedCodeAttribute"`
 - Report: `dotnet reportgenerator -reports:./coverage.cobertura.net8.0.xml -targetdir:./TestResults -reporttypes:Html`
 
 In one Go!

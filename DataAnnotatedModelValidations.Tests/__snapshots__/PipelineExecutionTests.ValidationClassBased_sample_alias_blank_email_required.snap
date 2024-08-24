@@ -3,7 +3,6 @@
     {
       "message": "The Email field is required.",
       "locations": [
-
         {
           "line": 1,
           "column": 3

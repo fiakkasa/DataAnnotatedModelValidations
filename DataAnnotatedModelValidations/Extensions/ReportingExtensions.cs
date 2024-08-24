@@ -1,24 +1,15 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using DataAnnotatedModelValidations.Utils;
-using HotChocolate;
-using HotChocolate.Resolvers;
-using HotChocolate.Types;
-using Humanizer;
 
 namespace DataAnnotatedModelValidations.Extensions;
 
 internal static class ReportingExtensions
 {
-    private static readonly Regex _bracketsRegex = RegexUtils.GetBracketsRegex();
-
     internal static string GetNormalizedMemberName(this string memberName) =>
-        _bracketsRegex.Replace(memberName.Camelize(), "_");
+        RegexUtils.BracketsRegularExpression.Replace(memberName.Camelize(), ReportingConsts.BracketReplacement);
 
     internal static IEnumerable<string> ToTokenizedMemberNames(this string trimmedMemberName) =>
         trimmedMemberName
-            .Split(':')
+            .Split(ReportingConsts.MemberNameTokenizationChar)
             .Select(GetNormalizedMemberName);
 
     internal static IEnumerable<string> ToComposedMemberNames(
@@ -49,17 +40,22 @@ internal static class ReportingExtensions
         string? memberName = default
     ) =>
         context.ReportError(
-            ErrorBuilder.New()
-                .SetMessage(message ?? "Unspecified Error")
-                .SetCode("DAMV-400")
+            ErrorBuilder
+                .New()
+                .SetMessage(message switch
+                {
+                    { Length: > 0 } => message,
+                    _ => ReportingConsts.GenericErrorMessage
+                })
+                .SetCode(ReportingConsts.GenericErrorCode)
                 .SetPath(
                     contextPathList.ToArgumentPath(
                         argument.ToComposedMemberNames(memberName, valueValidation)
                     )
                 )
-                .SetExtension("field", argument.Coordinate.MemberName)
-                .SetExtension("type", argument.DeclaringType.Name)
-                .SetExtension("specifiedBy", "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type")
+                .SetExtension(ReportingConsts.FieldName, argument.Coordinate.MemberName)
+                .SetExtension(ReportingConsts.TypeName, argument.DeclaringType.Name)
+                .SetExtension(ReportingConsts.SpecifiedByName, ReportingConsts.SpecifiedByUrl)
                 .Build()
         );
 }

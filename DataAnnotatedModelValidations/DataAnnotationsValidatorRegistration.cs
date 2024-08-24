@@ -1,7 +1,5 @@
 ﻿using DataAnnotatedModelValidations.Middleware;
 using DataAnnotatedModelValidations.TypeInterceptors;
-using HotChocolate.Execution.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAnnotatedModelValidations;
 

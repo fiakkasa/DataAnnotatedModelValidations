@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using DataAnnotatedModelValidations.Attributes;
-using HotChocolate.Resolvers;
-using HotChocolate.Types;
 
 namespace DataAnnotatedModelValidations.Extensions;
 
@@ -28,7 +22,10 @@ internal static class ValidationExtensions
                 (
                     success: Validator.TryValidateValue(
                         item,
-                        new(item, serviceProvider, default) { MemberName = itemName },
+                        new(item, serviceProvider, default)
+                        {
+                            MemberName = itemName
+                        },
                         validationResults,
                         attributes
                     ),
@@ -53,7 +50,7 @@ internal static class ValidationExtensions
                     ex switch
                     {
                         { TargetSite.DeclaringType.Name: { Length: > 0 } name } =>
-                            $"{ex.Message[0..^1]} for validation attribute {name}",
+                            $"{ex.Message[..^1]} for validation attribute {name}",
                         _ => ex.Message
                     }
                 )
@@ -67,11 +64,13 @@ internal static class ValidationExtensions
         argument =>
         {
             if (context.ArgumentValue<object>(argument.Name) is not { } item)
+            {
                 return;
+            }
 
             var validationResults = new List<ValidationResult>();
 
-            var (success, valueValidation) = 
+            var (success, valueValidation) =
                 argument.ContextData.ValidateItem(
                     item,
                     argument.Name,
@@ -86,7 +85,8 @@ internal static class ValidationExtensions
             }
 
             var contextPathList =
-                context.Path
+                context
+                    .Path
                     .ToList()
                     .OfType<string>()
                     .ToList();
@@ -122,12 +122,14 @@ internal static class ValidationExtensions
     internal static void ValidateInputs(this IMiddlewareContext context)
     {
         if (context.Selection.Field.Arguments is not { Count: > 0 } arguments)
+        {
             return;
+        }
 
         arguments
             .AsParallel()
             .Where(argument =>
-                argument is { }
+                argument is not null
                 && !argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute))
             )
             .ForAll(ValidateAndReport(context));

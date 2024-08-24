@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace DataAnnotatedModelValidations.Tests;
+﻿namespace DataAnnotatedModelValidations.Tests;
 
 public class DataAnnotationsValidatorRegistrationTests
 {

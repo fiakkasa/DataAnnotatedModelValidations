@@ -1,34 +1,29 @@
 ﻿using DataAnnotatedModelValidations.Middleware;
-using HotChocolate;
-using HotChocolate.Resolvers;
-using HotChocolate.Types;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace DataAnnotatedModelValidations.Tests;
+namespace DataAnnotatedModelValidations.Tests.Middleware;
 
 public class ValidatorMiddlewareTests
 {
-    private readonly Mock<FieldDelegate> mockFieldDelegate;
-    private readonly Mock<IMiddlewareContext> mockContext;
-    private readonly ValidatorMiddleware middleware;
+    private readonly ValidatorMiddleware _middleware;
+    private readonly Mock<IMiddlewareContext> _mockContext;
+    private readonly Mock<FieldDelegate> _mockFieldDelegate;
 
     public ValidatorMiddlewareTests()
     {
-        mockFieldDelegate = new();
-        mockContext = new();
-        middleware = new(mockFieldDelegate.Object);
+        _mockFieldDelegate = new();
+        _mockContext = new();
+        _middleware = new(_mockFieldDelegate.Object);
     }
 
     [Fact(DisplayName = "InvokeAsync - No Arguments")]
     public async Task InvokeAsyncNoArguments()
     {
-        mockContext
+        _mockContext
             .SetupGet(p => p.Selection.Field)
             .Returns(new Mock<IObjectField>().Object);
 
-        await middleware.InvokeAsync(mockContext.Object);
-        mockFieldDelegate.Verify();
+        await _middleware.InvokeAsync(_mockContext.Object);
+        _mockFieldDelegate.Verify();
     }
 
     [Fact(DisplayName = "InvokeAsync - Null Arguments")]
@@ -45,14 +40,15 @@ public class ValidatorMiddlewareTests
         mockField
             .SetupGet(p => p.Arguments)
             .Returns(mockFieldCollection.Object);
-        mockContext
+        _mockContext
             .SetupGet(p => p.Selection.Field)
             .Returns(mockField.Object);
-        mockContext.SetupGet(p => p.Path)
+        _mockContext
+            .SetupGet(p => p.Path)
             .Returns(Path.Root.Append("path"));
 
-        await middleware.InvokeAsync(mockContext.Object);
-        mockFieldDelegate.Verify();
+        await _middleware.InvokeAsync(_mockContext.Object);
+        _mockFieldDelegate.Verify();
 
         static IEnumerator<IInputField> MockEnumerator()
         {
