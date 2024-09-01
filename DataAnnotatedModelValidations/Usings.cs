@@ -1,0 +1,15 @@
+global using HotChocolate;
+global using HotChocolate.Resolvers;
+global using HotChocolate.Types;
+global using Humanizer;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System;
+global using System.ComponentModel.DataAnnotations;
+global using System.Threading.Tasks;
+global using HotChocolate.Configuration;
+global using HotChocolate.Types.Descriptors.Definitions;
+global using System.Diagnostics.CodeAnalysis;
+global using System.Text.RegularExpressions;
+global using HotChocolate.Execution.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
