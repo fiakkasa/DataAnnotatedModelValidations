@@ -57,8 +57,8 @@ public class PipelineExecutionTests
 
         var result = await requestExecutor.ExecuteAsync(query);
 
-        Assert.Null(result.ExpectQueryResult().Errors);
-        result.ExpectQueryResult().ToJson().MatchSnapshot();
+        Assert.Null(result.ExpectOperationResult().Errors);
+        result.ExpectOperationResult().ToJson().MatchSnapshot();
     }
 
     [Theory]
@@ -119,8 +119,8 @@ public class PipelineExecutionTests
                 .ExecuteRequestAsync(query)
                 .ConfigureAwait(true);
 
-        Assert.Equal(numberOfErrors, result.ExpectQueryResult().Errors?.Count);
-        result.ExpectQueryResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
+        Assert.Equal(numberOfErrors, result.ExpectOperationResult().Errors?.Count);
+        result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
 
     [Theory]
@@ -201,8 +201,8 @@ public class PipelineExecutionTests
                 .ExecuteRequestAsync(query)
                 .ConfigureAwait(true);
 
-        Assert.Equal(numberOfErrors, result.ExpectQueryResult().Errors?.Count);
-        result.ExpectQueryResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
+        Assert.Equal(numberOfErrors, result.ExpectOperationResult().Errors?.Count);
+        result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
 
     public record SampleRecordInline(

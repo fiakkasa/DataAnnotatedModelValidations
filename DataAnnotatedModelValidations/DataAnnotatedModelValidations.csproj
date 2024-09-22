@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="HotChocolate.Execution" Version="14.0.0-rc.1"/>
+        <PackageReference Include="HotChocolate.Execution" Version="14.0.0-rc.2"/>
         <PackageReference Include="Humanizer" Version="2.14.1"/>
     </ItemGroup>
 
