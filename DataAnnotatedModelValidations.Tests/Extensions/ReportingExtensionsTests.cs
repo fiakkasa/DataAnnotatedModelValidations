@@ -1,12 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
 using DataAnnotatedModelValidations.Extensions;
-using HotChocolate;
-using HotChocolate.Resolvers;
-using HotChocolate.Types;
-using NSubstitute;
 
-namespace DataAnnotatedModelValidations.Tests;
+namespace DataAnnotatedModelValidations.Tests.Extensions;
 
 public class ReportingExtensionsTests
 {
@@ -25,30 +19,46 @@ public class ReportingExtensionsTests
     [Fact]
     public void ToTokenizedMemberNames_Tokenizes_Value() =>
         Assert.Equal(
-            new[] { "hello", "world" },
+            [
+                "hello",
+                "world"
+            ],
             "hello:world".ToTokenizedMemberNames()
         );
 
     [Fact]
     public void ToComposedMemberNames_Enumerates_Name_When_MemberName_Is_Null() =>
-        Assert.Equal(new[] { "Name" }, _argument.ToComposedMemberNames(default, default));
+        Assert.Equal(["Name"], _argument.ToComposedMemberNames(default, default));
 
     [Fact]
     public void ToComposedMemberNames_Enumerates_Name_When_MemberName_Is_Blank() =>
-        Assert.Equal(new[] { "Name" }, _argument.ToComposedMemberNames(" ", default));
+        Assert.Equal(["Name"], _argument.ToComposedMemberNames(" ", default));
 
     [Fact]
     public void ToComposedMemberNames_Enumerates_MemberName_And_Name_When_ValueValidation_Is_Not_True() =>
-        Assert.Equal(new[] { "Name", "hello", "world_0_" }, _argument.ToComposedMemberNames("Hello:World[0]", default));
+        Assert.Equal(
+            [
+                "Name",
+                "hello",
+                "world_0_"
+            ],
+            _argument.ToComposedMemberNames("Hello:World[0]", default)
+        );
 
     [Fact]
     public void ToComposedMemberNames_Enumerates_MemberName_When_ValueValidation_Is_True() =>
-        Assert.Equal(new[] { "hello", "world_0_" }, _argument.ToComposedMemberNames("Hello:World[0]", true));
+        Assert.Equal(
+            [
+                "hello",
+                "world_0_"
+            ],
+            _argument.ToComposedMemberNames("Hello:World[0]", true)
+        );
 
     [Fact]
     public void ToArgumentPath_Produces_Path()
     {
-        var result = new List<string> { "hello" }.ToArgumentPath(new[] { "world" });
+        var result = new[] { "hello" }.ToArgumentPath(["world"]);
 
         Assert.Equal(
             Path.Root.Append("hello").Append("world"),
@@ -63,7 +73,7 @@ public class ReportingExtensionsTests
 
         context.ReportError(
             _argument,
-            new [] { "hello" },
+            ["hello"],
             default,
             "world",
             default
@@ -73,13 +83,14 @@ public class ReportingExtensionsTests
 
         Assert.Single(
             receivedArguments,
-            x => x is Error
-            {
-                Code: "DAMV-400",
-                Message: "world",
-                Path: { Length: 2 } p
-            }
-            && p.Equals(Path.Root.Append("hello").Append("Name"))
+            x =>
+                x is Error
+                {
+                    Code: ReportingConsts.GenericErrorCode,
+                    Message: "world",
+                    Path: { Length: 2 } p
+                }
+                && p.Equals(Path.Root.Append("hello").Append("Name"))
         );
     }
 
@@ -90,7 +101,7 @@ public class ReportingExtensionsTests
 
         context.ReportError(
             _argument,
-            new [] { "hello" },
+            ["hello"],
             default,
             default,
             "member"
@@ -101,12 +112,12 @@ public class ReportingExtensionsTests
         Assert.Single(
             receivedArguments,
             x => x is Error
-            {
-                Code: "DAMV-400",
-                Message: "Unspecified Error",
-                Path: { Length: 3 } p
-            }
-            && p.Equals(Path.Root.Append("hello").Append("Name").Append("member"))
+                 {
+                     Code: ReportingConsts.GenericErrorCode,
+                     Message: ReportingConsts.GenericErrorMessage,
+                     Path: { Length: 3 } p
+                 }
+                 && p.Equals(Path.Root.Append("hello").Append("Name").Append("member"))
         );
     }
 }

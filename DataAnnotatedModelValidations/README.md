@@ -2,9 +2,34 @@
 
 Data Annotated Model Validation Middleware for HotChocolate.
 
-The purpose of this Middleware is to provide the same behavior like a ASP.Net controllers where all models would be validated according to the specified Data Annotations or the `IValidatableObject` implementation; in essence it's always on.
+The purpose of this Middleware is to provide the same behavior as ASP.Net controllers, where all models would be
+validated according to the specified Data Annotations or the `IValidatableObject` implementation; in essence it's always
+on.
 
-In addition individual method arguments can be validated using annotations from `System.ComponentModel.Annotations`.
+In addition, individual method arguments can be validated using annotations from `System.ComponentModel.Annotations`.
+
+[Nuget](https://www.nuget.org/packages/DataAnnotatedModelValidations/)
+
+## Compatibility
+
+### Current Releases
+
+| HotChocolate Version | DataAnnotatedModelValidations Version | .NET Version |
+|----------------------|---------------------------------------|--------------|
+| 14.0.0 or higher     | 6.0.0                                 | .NET 8       |
+| 13.9.0 or higher     | 5.2.0                                 | .NET 6, 7, 8 |
+| 13.7.0 or higher     | 5.1.0                                 | .NET 6, 7, 8 |
+| 13.7.0 or higher     | 5.0.0                                 | .NET 6, 7, 8 |
+
+### Past Releases
+
+| HotChocolate Version | Last DataAnnotatedModelValidations Version | .NET Version |
+|----------------------|--------------------------------------------|--------------|
+| 13.7.0 or higher     | 4.2.0                                      | .NET 6, 7    |
+| 12.16.0 or higher    | 3.0.1                                      | .NET 7       |
+| 12.4.1 or higher     | 2.1.4                                      | .NET 6       |
+
+📝For more information please visit https://www.nuget.org/packages/DataAnnotatedModelValidations/#versions-body-tab
 
 ## Usage
 
@@ -80,11 +105,14 @@ public record Sample
 
 #### Records with auto synthesized properties
 
-> The auto-property is initialized to the value of the corresponding primary constructor parameter. Attributes can be applied to the synthesized auto-property and its backing field by using `property:` or `field:` targets for attributes syntactically applied to the corresponding record parameter.
+> The auto-property is initialized to the value of the corresponding primary constructor parameter. Attributes can be
+> applied to the synthesized auto-property and its backing field by using `property:` or `field:` targets for attributes
+> syntactically applied to the corresponding record parameter.
 
 https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/records
 
-So per the documentation and following the guideline, a solution to the challenge mentioned would be adding the `property:` prefix to the validation attribute.
+So per the documentation and following the guideline, a solution to the challenge mentioned would be adding the
+`property:` prefix to the validation attribute.
 
 ```csharp
 public record Sample(
@@ -97,7 +125,8 @@ public record Sample(
 
 ## Notes
 
-When implementing the `IValidatableObject` interface HotChocolate considers the Validate as a resolver; to avoid getting schema errors said method needs to be ignored.
+When implementing the `IValidatableObject` interface HotChocolate considers the Validate as a resolver; to avoid getting
+schema errors said method needs to be ignored.
 
 ex.
 
@@ -128,31 +157,43 @@ The field name will be transformed in the error path as `fieldName,_index_`.
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "path": ["sample", "obj", "children", "_2_", "count"],
+      "path": [
+        "sample",
+        "obj",
+        "children",
+        "_2_",
+        "count"
+      ],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
         "type": "Mutation",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ]
 }
 ```
 
-If you choose to omit the `:` character and add the names as `FieldName[index]` the field name and the index will be represented as one entry, `fieldName_index_`.
+If you choose to omit the `:` character and add the names as `FieldName[index]` the field name and the index will be
+represented as one entry, `fieldName_index_`.
 
 ```json
 {
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "path": ["sample", "obj", "children_2_", "count"],
+      "path": [
+        "sample",
+        "obj",
+        "children_2_",
+        "count"
+      ],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
         "type": "Mutation",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ]
@@ -170,22 +211,30 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
   "errors": [
     {
       "message": "Some validation error!",
-      "path": ["sample", "obj", "hello"],
+      "path": [
+        "sample",
+        "obj",
+        "hello"
+      ],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
         "type": "Query",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     },
     {
       "message": "Some validation error!",
-      "path": ["sample", "obj", "world"],
+      "path": [
+        "sample",
+        "obj",
+        "world"
+      ],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
         "type": "Query",
-        "specifiedBy": "http://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
@@ -197,4 +246,9 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
 
 ### Property nesting
 
-If there is a need to express a nested relationship of a property and it's parent, consider adding the names separated by a colon as `ParentName:FieldName:[index]`
+If there is a need to express a nested relationship of a property and it's parent, consider adding the names separated
+by a colon as `ParentName:FieldName:[index]`
+
+## Similar Projects
+
+- https://github.com/VarunSaiTeja/Graph.ArgumentValidator

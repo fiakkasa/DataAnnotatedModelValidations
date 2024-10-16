@@ -1,27 +1,24 @@
 ﻿using DataAnnotatedModelValidations.Attributes;
-using HotChocolate.Configuration;
-using HotChocolate.Types.Descriptors.Definitions;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
 
 public sealed class ValidatorTypeInterceptor : TypeInterceptor
 {
-    private readonly static Type _ignoreType = typeof(IgnoreModelValidationAttribute);
-    private readonly static Type _validationType = typeof(ValidationAttribute);
+    private static readonly Type _ignoreType = typeof(IgnoreModelValidationAttribute);
+    private static readonly Type _validationType = typeof(ValidationAttribute);
 
     public override void OnBeforeCompleteType(ITypeCompletionContext completionContext, DefinitionBase? definition)
     {
         if (definition is not ObjectTypeDefinition { Fields: { Count: > 0 } fields })
+        {
             return;
+        }
 
-        var collection = 
+        var collection =
             fields
                 .Where(field => field.Arguments.Count > 0)
                 .SelectMany(field => field.Arguments)
-                .Where(arg => arg is { Parameter: { } });
+                .Where(arg => arg is { Parameter: not null });
 
         foreach (var argument in collection)
         {
@@ -35,7 +32,9 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
             }
 
             if (argument.Parameter!.GetCustomAttributes(_validationType, true) is { Length: > 0 } attributes)
+            {
                 argument.ContextData[nameof(ValidationAttribute)] = attributes;
+            }
         }
     }
 }

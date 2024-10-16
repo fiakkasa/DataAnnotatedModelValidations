@@ -1,95 +1,93 @@
 ﻿using DataAnnotatedModelValidations.Attributes;
 using DataAnnotatedModelValidations.TypeInterceptors;
-using HotChocolate.Configuration;
-using HotChocolate.Types.Descriptors.Definitions;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 
-namespace DataAnnotatedModelValidations.Tests;
+namespace DataAnnotatedModelValidations.Tests.TypeInterceptors;
 
 public class ValidatorTypeInterceptorTests
 {
-    private readonly ValidatorTypeInterceptor interceptor;
-    private readonly Mock<ParameterInfo> mockParameter;
-    private readonly ObjectTypeDefinition definition;
-    private readonly ArgumentDefinition argument;
-    private readonly Mock<ITypeCompletionContext> mockTypeCompletionContext = new();
+    private readonly ArgumentDefinition _argument;
+    private readonly ObjectTypeDefinition _definition;
+    private readonly ValidatorTypeInterceptor _interceptor;
+    private readonly Mock<ParameterInfo> _mockParameter;
+    private readonly Mock<ITypeCompletionContext> _mockTypeCompletionContext = new();
 
     public ValidatorTypeInterceptorTests()
     {
-        interceptor = new();
-        mockParameter = new();
-        argument = new ArgumentDefinition
+        _interceptor = new();
+        _mockParameter = new();
+        _argument = new ArgumentDefinition
         {
-            Parameter = mockParameter.Object
+            Parameter = _mockParameter.Object
         };
         var objectFieldDefinition = new ObjectFieldDefinition();
         objectFieldDefinition.Arguments.Add(default!);
-        objectFieldDefinition.Arguments.Add(argument);
-        var fields = new BindableList<ObjectFieldDefinition> { objectFieldDefinition };
-        definition = new ObjectTypeDefinition();
-        definition.Fields.AddRange(fields);
+        objectFieldDefinition.Arguments.Add(_argument);
+        var fields = new BindableList<ObjectFieldDefinition>
+        {
+            objectFieldDefinition
+        };
+        _definition = new ObjectTypeDefinition();
+        _definition.Fields.AddRange(fields);
     }
 
     private void Act() =>
-        interceptor.OnBeforeCompleteType(
-            mockTypeCompletionContext.Object,
-            definition
+        _interceptor.OnBeforeCompleteType(
+            _mockTypeCompletionContext.Object,
+            _definition
         );
 
     [Fact(DisplayName = "OnBeforeCompleteType - With Null Parameters - Ignore")]
     public void OnBeforeCompleteTypeWithNullParametersIgnore()
     {
-        mockParameter
+        _mockParameter
             .Setup(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()))
             .Returns(true);
 
         Act();
 
-        mockParameter.Verify(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
-        Assert.True(argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute)));
+        _mockParameter.Verify(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
+        Assert.True(_argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute)));
     }
 
     [Fact(DisplayName = "OnBeforeCompleteType - With Null Parameters - Attributes")]
     public void OnBeforeCompleteTypeWithNullParametersAttributes()
     {
-        mockParameter
+        _mockParameter
             .Setup(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()))
             .Returns(false);
-        mockParameter
+        _mockParameter
             .SetupGet(p => p.ParameterType)
             .Returns(new Mock<Type>().Object);
-        mockParameter
+        _mockParameter
             .Setup(m => m.GetCustomAttributes(It.IsAny<Type>(), It.IsAny<bool>()))
-            .Returns(new[] { new Mock<ValidationAttribute>().Object });
+            .Returns([new Mock<ValidationAttribute>().Object]);
 
         Act();
 
-        mockParameter.Verify(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
-        mockParameter.Verify(m => m.GetCustomAttributes(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
-        Assert.False(argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute)));
-        Assert.True(argument.ContextData.ContainsKey(nameof(ValidationAttribute)));
+        _mockParameter.Verify(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
+        _mockParameter.Verify(m => m.GetCustomAttributes(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
+        Assert.False(_argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute)));
+        Assert.True(_argument.ContextData.ContainsKey(nameof(ValidationAttribute)));
     }
 
     [Fact(DisplayName = "OnBeforeCompleteType - With Null Parameters - No Attributes")]
     public void OnBeforeCompleteTypeWithNullParametersNoAttributes()
     {
-        mockParameter
+        _mockParameter
             .Setup(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()))
             .Returns(false);
-        mockParameter
+        _mockParameter
             .SetupGet(p => p.ParameterType)
             .Returns(new Mock<Type>().Object);
-        mockParameter
+        _mockParameter
             .Setup(m => m.GetCustomAttributes(It.IsAny<Type>(), It.IsAny<bool>()))
             .Returns(default(ValidationAttribute[])!);
 
         Act();
 
-        mockParameter.Verify(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
-        mockParameter.Verify(m => m.GetCustomAttributes(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
-        Assert.False(argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute)));
-        Assert.False(argument.ContextData.ContainsKey(nameof(ValidationAttribute)));
+        _mockParameter.Verify(m => m.IsDefined(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
+        _mockParameter.Verify(m => m.GetCustomAttributes(It.IsAny<Type>(), It.IsAny<bool>()), Times.Once);
+        Assert.False(_argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute)));
+        Assert.False(_argument.ContextData.ContainsKey(nameof(ValidationAttribute)));
     }
 }

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace DataAnnotatedModelValidations.Extensions;
 
 internal static class CollectionExtensions

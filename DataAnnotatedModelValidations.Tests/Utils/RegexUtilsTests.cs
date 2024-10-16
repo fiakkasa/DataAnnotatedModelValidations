@@ -1,19 +1,27 @@
-using System.Text.RegularExpressions;
 using DataAnnotatedModelValidations.Utils;
+using System.Text.RegularExpressions;
 
-namespace DataAnnotatedModelValidations.Tests;
+namespace DataAnnotatedModelValidations.Tests.Utils;
 
 public class RegexUtilsTests
-{   
+{
     [Fact]
     public void Returns_Regular_Expression() =>
-#if NET7_0_OR_GREATER
-        Assert.IsAssignableFrom<Regex>(RegexUtils.GetBracketsRegex());
-#else
-        Assert.IsType<Regex>(RegexUtils.GetBracketsRegex());
-#endif
+        Assert.IsAssignableFrom<Regex>(RegexUtils.BracketsRegularExpression);
 
     [Fact]
-    public void Returns_Same_Instance_Of_Regular_Expression()=>
-        Assert.Same(RegexUtils.GetBracketsRegex(), RegexUtils.GetBracketsRegex());
+    public void Returns_Same_Instance_Of_Regular_Expression() =>
+        Assert.Same(RegexUtils.BracketsRegularExpression, RegexUtils.BracketsRegularExpression);
+
+    [Theory]
+    [InlineData("[hello]", true)]
+    [InlineData("[ hello ]", true)]
+    [InlineData("[hello", true)]
+    [InlineData("hello]", true)]
+    [InlineData("[hello[world", true)]
+    [InlineData("hello]world]", true)]
+    [InlineData("hello[]world[]", true)]
+    [InlineData("hello", false)]
+    public void Matches_Target(string input, bool expected) =>
+        Assert.Equal(expected, RegexUtils.BracketsRegularExpression.Matches(input).Count > 0);
 }

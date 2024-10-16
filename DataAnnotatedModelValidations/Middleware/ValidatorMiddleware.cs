@@ -1,20 +1,16 @@
 ﻿using DataAnnotatedModelValidations.Extensions;
-using HotChocolate.Resolvers;
-using System.Threading.Tasks;
 
 namespace DataAnnotatedModelValidations.Middleware;
 
-public sealed class ValidatorMiddleware
+public sealed class ValidatorMiddleware(FieldDelegate next)
 {
-    private readonly FieldDelegate _next;
-
-    public ValidatorMiddleware(FieldDelegate next) => _next = next;
-
     public async Task InvokeAsync(IMiddlewareContext context)
     {
         context.ValidateInputs();
 
         if (!context.HasErrors)
-            await _next(context).ConfigureAwait(false);
+        {
+            await next(context);
+        }
     }
 }
