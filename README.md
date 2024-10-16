@@ -18,12 +18,12 @@ In addition, individual method arguments can be validated using annotations from
 
 ### Current Releases
 
-| HotChocolate Version  | DataAnnotatedModelValidations Version | .NET Version |
-|-----------------------|---------------------------------------|--------------|
-| 14.0.0 or higher | 6.0.0                          | .NET 8       |
-| 13.9.0 or higher      | 5.2.0                                 | .NET 6, 7, 8 |
-| 13.7.0 or higher      | 5.1.0                                 | .NET 6, 7, 8 |
-| 13.7.0 or higher      | 5.0.0                                 | .NET 6, 7, 8 |
+| HotChocolate Version | DataAnnotatedModelValidations Version | .NET Version |
+|----------------------|---------------------------------------|--------------|
+| 14.0.0 or higher     | 6.0.0                                 | .NET 8       |
+| 13.9.0 or higher     | 5.2.0                                 | .NET 6, 7, 8 |
+| 13.7.0 or higher     | 5.1.0                                 | .NET 6, 7, 8 |
+| 13.7.0 or higher     | 5.0.0                                 | .NET 6, 7, 8 |
 
 ### Past Releases
 

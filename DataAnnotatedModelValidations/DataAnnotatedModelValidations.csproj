@@ -30,8 +30,4 @@
         <InternalsVisibleTo Include="DataAnnotatedModelValidations.Tests"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="DataAnnotatedModelValidations.csproj.user"/>
-    </ItemGroup>
-
 </Project>
