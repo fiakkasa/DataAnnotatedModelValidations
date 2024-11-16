@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageId>$(MSBuildProjectName)</PackageId>
-        <Version>6.0.0</Version>
+        <Version>6.1.0</Version>
         <Authors>Adamos Fiakkas</Authors>
         <Description>Data Annotated Model Validation Middleware for HotChocolate</Description>
         <Copyright>Adamos Fiakkas</Copyright>
@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="HotChocolate.Execution" Version="14.0.0"/>
+        <PackageReference Include="HotChocolate.Execution" Version="14.1.0"/>
         <PackageReference Include="Humanizer" Version="2.14.1"/>
     </ItemGroup>
 
