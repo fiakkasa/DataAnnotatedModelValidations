@@ -20,7 +20,7 @@
 In one Go!
 
 ```powershell
-dotnet test /p:CollectCoverage=true /p:Threshold=0 /p:CoverletOutputFormat=cobertura /p:CoverletOutput='../coverage.cobertura.xml' /p:ExcludeByAttribute="GeneratedCodeAttribute"
+dotnet test /p:CollectCoverage=true /p:Threshold=80 /p:CoverletOutputFormat=cobertura /p:CoverletOutput='../coverage.cobertura.xml' /p:ExcludeByAttribute="GeneratedCodeAttribute"
 dotnet reportgenerator -reports:./coverage.cobertura.net9.0.xml -targetdir:./TestResults -reporttypes:Html
 ```
 
