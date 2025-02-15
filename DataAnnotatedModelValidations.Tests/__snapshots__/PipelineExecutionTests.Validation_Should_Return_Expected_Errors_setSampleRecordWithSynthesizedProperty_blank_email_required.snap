@@ -1,0 +1,27 @@
+﻿{
+  "errors": [
+    {
+      "message": "The Email field is required.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 12
+        }
+      ],
+      "path": [
+        "setSampleRecordWithSynthesizedProperty",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setSampleRecordWithSynthesizedProperty",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "setSampleRecordWithSynthesizedProperty": null
+  }
+}

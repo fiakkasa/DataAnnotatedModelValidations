@@ -1,0 +1,45 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field Email must be a string or array type with a minimum length of '3'.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 3
+        }
+      ],
+      "path": [
+        "sampleNonNull",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sampleNonNull",
+        "type": "Query",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The Email field is not a valid e-mail address.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 3
+        }
+      ],
+      "path": [
+        "sampleNonNull",
+        "obj",
+        "email"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sampleNonNull",
+        "type": "Query",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": null
+}
