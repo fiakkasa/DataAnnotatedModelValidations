@@ -5,54 +5,35 @@ namespace DataAnnotatedModelValidations.Tests.Middleware;
 public class ValidatorMiddlewareTests
 {
     private readonly ValidatorMiddleware _middleware;
-    private readonly Mock<IMiddlewareContext> _mockContext;
-    private readonly Mock<FieldDelegate> _mockFieldDelegate;
+    private readonly IMiddlewareContext _mockContext;
+    private readonly FieldDelegate _mockFieldDelegate;
 
     public ValidatorMiddlewareTests()
     {
-        _mockFieldDelegate = new();
-        _mockContext = new();
-        _middleware = new(_mockFieldDelegate.Object);
+        _mockContext = Substitute.For<IMiddlewareContext>();
+        _mockFieldDelegate = Substitute.For<FieldDelegate>();
+        _middleware = new(_mockFieldDelegate);
+        _mockContext.Selection.Field
+            .Returns(Substitute.For<IObjectField>());
     }
 
-    [Fact(DisplayName = "InvokeAsync - No Arguments")]
-    public async Task InvokeAsyncNoArguments()
+    [Fact]
+    public async Task InvokeAsync_Should_Call_Field_Delegate_When_No_Errors()
     {
-        _mockContext
-            .SetupGet(p => p.Selection.Field)
-            .Returns(new Mock<IObjectField>().Object);
+        _mockContext.HasErrors.Returns(false);
 
-        await _middleware.InvokeAsync(_mockContext.Object);
-        _mockFieldDelegate.Verify();
+        await _middleware.InvokeAsync(_mockContext);
+
+        Assert.NotEmpty(_mockFieldDelegate.ReceivedCalls());
     }
 
-    [Fact(DisplayName = "InvokeAsync - Null Arguments")]
-    public async Task InvokeAsyncNullArguments()
+    [Fact]
+    public async Task InvokeAsync_Should_Not_Call_Field_Delegate_When_Errors_Reported()
     {
-        var mockFieldCollection = new Mock<IFieldCollection<IInputField>>();
-        mockFieldCollection
-            .Setup(m => m.GetEnumerator())
-            .Returns(MockEnumerator);
-        mockFieldCollection
-            .SetupGet(p => p.Count)
-            .Returns(1);
-        var mockField = new Mock<IObjectField>();
-        mockField
-            .SetupGet(p => p.Arguments)
-            .Returns(mockFieldCollection.Object);
-        _mockContext
-            .SetupGet(p => p.Selection.Field)
-            .Returns(mockField.Object);
-        _mockContext
-            .SetupGet(p => p.Path)
-            .Returns(Path.Root.Append("path"));
+        _mockContext.HasErrors.Returns(true);
 
-        await _middleware.InvokeAsync(_mockContext.Object);
-        _mockFieldDelegate.Verify();
+        await _middleware.InvokeAsync(_mockContext);
 
-        static IEnumerator<IInputField> MockEnumerator()
-        {
-            yield return default!;
-        }
+        Assert.Empty(_mockFieldDelegate.ReceivedCalls());
     }
 }
