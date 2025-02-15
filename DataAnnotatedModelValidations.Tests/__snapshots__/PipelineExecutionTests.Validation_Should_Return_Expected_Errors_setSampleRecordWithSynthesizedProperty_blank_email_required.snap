@@ -9,19 +9,19 @@
         }
       ],
       "path": [
-        "setSampleRecordInline",
+        "setSampleRecordWithSynthesizedProperty",
         "obj",
         "email"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setSampleRecordInline",
+        "field": "setSampleRecordWithSynthesizedProperty",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "setSampleRecordInline": null
+    "setSampleRecordWithSynthesizedProperty": null
   }
 }

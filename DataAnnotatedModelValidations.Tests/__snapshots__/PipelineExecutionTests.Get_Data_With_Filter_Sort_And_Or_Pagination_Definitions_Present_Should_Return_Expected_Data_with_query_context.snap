@@ -1,0 +1,32 @@
+﻿{
+  "data": {
+    "sampleResponses": {
+      "items": [
+        {
+          "name": "Jane Doe",
+          "email": null,
+          "numberOfPets": 1,
+          "age": 25
+        },
+        {
+          "name": "Alice Johnson",
+          "email": null,
+          "numberOfPets": 0,
+          "age": null
+        },
+        {
+          "name": "Bob Smith",
+          "email": "bob@smith.com",
+          "numberOfPets": 0,
+          "age": null
+        },
+        {
+          "name": "John Doe",
+          "email": "john@doe.com",
+          "numberOfPets": 2,
+          "age": 30
+        }
+      ]
+    }
+  }
+}

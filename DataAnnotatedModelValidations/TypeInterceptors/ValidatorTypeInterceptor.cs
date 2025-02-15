@@ -1,39 +1,70 @@
-﻿using DataAnnotatedModelValidations.Attributes;
+﻿using DataAnnotatedModelValidations.Middleware;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
 
 public sealed class ValidatorTypeInterceptor : TypeInterceptor
 {
-    private static readonly Type _ignoreType = typeof(IgnoreModelValidationAttribute);
-    private static readonly Type _validationType = typeof(ValidationAttribute);
+    private static IBindableList<ObjectFieldDefinition>? ObjectTypeDefinitionFields(DefinitionBase? definition) =>
+        definition switch
+        {
+            ObjectTypeDefinition
+            {
+                Name: OperationTypeNames.Query
+                or OperationTypeNames.Mutation
+                or OperationTypeNames.Subscription,
+                Fields.Count: > 0
+            } objectTypeDefinition => objectTypeDefinition.Fields,
+            _ => default
+        };
 
-    public override void OnBeforeCompleteType(ITypeCompletionContext completionContext, DefinitionBase? definition)
+    public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, DefinitionBase definition)
     {
-        if (definition is not ObjectTypeDefinition { Fields: { Count: > 0 } fields })
+        if (ObjectTypeDefinitionFields(definition) is not { } fields)
         {
             return;
         }
 
-        var collection =
-            fields
-                .Where(field => field.Arguments.Count > 0)
-                .SelectMany(field => field.Arguments)
-                .Where(arg => arg is { Parameter: not null });
-
-        foreach (var argument in collection)
+        foreach (var field in fields)
         {
-            if (
-                argument.Parameter!.IsDefined(_ignoreType, true)
-                || argument.Parameter!.ParameterType.IsDefined(_ignoreType, true)
-            )
+            var isValidatable = false;
+
+            foreach (var argument in field.Arguments)
             {
-                argument.ContextData[nameof(IgnoreModelValidationAttribute)] = true;
-                continue;
+                if (
+                    argument is not { Parameter: { } parameter }
+                    || parameter.IsDefined(Consts.IgnoreValidationType, true)
+                    || parameter.ParameterType.IsDefined(Consts.IgnoreValidationType, true)
+                )
+                {
+                    continue;
+                }
+
+                var customAttributes = parameter.GetCustomAttributes(Consts.ValidationType, true);
+
+                if (customAttributes.Length > 0)
+                {
+                    argument.ContextData[Consts.ArgumentValidationContextKey] = customAttributes;
+                    isValidatable = true;
+                }
+                else if (
+                    parameter.ParameterType.IsAssignableTo(Consts.ValidatableType)
+                    || parameter
+                        .ParameterType
+                        .GetProperties()
+                        .Any(prop => prop.GetCustomAttributes(Consts.ValidationType, true).Length > 0)
+                )
+                {
+                    argument.ContextData[Consts.ArgumentValidationContextKey] = Array.Empty<object>();
+                    isValidatable = true;
+                }
             }
 
-            if (argument.Parameter!.GetCustomAttributes(_validationType, true) is { Length: > 0 } attributes)
+            if (isValidatable)
             {
-                argument.ContextData[nameof(ValidationAttribute)] = attributes;
+                field.ContextData[Consts.FieldValidationContextKey] = true;
+                field
+                    .ToDescriptor(discoveryContext.DescriptorContext)
+                    .Use<ValidatorMiddleware>();
             }
         }
     }

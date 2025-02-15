@@ -3,14 +3,14 @@
 public class DataAnnotationsValidatorRegistrationTests
 {
     [Fact]
-    public void AddDataAnnotationsValidator()
+    public void AddDataAnnotationsValidator_Should_Add_Interceptor_To_GraphQLBuilder()
     {
         var requestExecutorBuilder = new ServiceCollection().AddGraphQL();
         var count = requestExecutorBuilder.Services.Count;
 
         requestExecutorBuilder.AddDataAnnotationsValidator();
 
-        // Interceptor + Validator + Previous
-        Assert.Equal(count + 2, requestExecutorBuilder.Services.Count);
+        // Interceptor + Previous
+        Assert.Equal(count + 1, requestExecutorBuilder.Services.Count);
     }
 }

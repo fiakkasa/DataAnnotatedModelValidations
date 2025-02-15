@@ -1,5 +1,3 @@
-using DataAnnotatedModelValidations.Attributes;
-
 namespace DataAnnotatedModelValidations.Extensions;
 
 internal static class ValidationExtensions
@@ -14,7 +12,7 @@ internal static class ValidationExtensions
     {
         try
         {
-            _ = context.TryGetValue(nameof(ValidationAttribute), out var attrs);
+            _ = context.TryGetValue(Consts.ArgumentValidationContextKey, out var attrs);
 
             return attrs switch
             {
@@ -50,7 +48,7 @@ internal static class ValidationExtensions
                     ex switch
                     {
                         { TargetSite.DeclaringType.Name: { Length: > 0 } name } =>
-                            $"{ex.Message[..^1]} for validation attribute {name}",
+                            $"{ex.Message.TrimEnd('.')} for validation attribute {name}",
                         _ => ex.Message
                     }
                 )
@@ -121,7 +119,10 @@ internal static class ValidationExtensions
 
     internal static void ValidateInputs(this IMiddlewareContext context)
     {
-        if (context.Selection.Field.Arguments is not { Count: > 0 } arguments)
+        if (
+            !context.Selection.Field.ContextData.ContainsKey(Consts.FieldValidationContextKey)
+            || context.Selection.Field.Arguments is not { Count: > 0 } arguments
+        )
         {
             return;
         }
@@ -129,8 +130,7 @@ internal static class ValidationExtensions
         arguments
             .AsParallel()
             .Where(argument =>
-                argument is not null
-                && !argument.ContextData.ContainsKey(nameof(IgnoreModelValidationAttribute))
+                argument?.ContextData.ContainsKey(Consts.ArgumentValidationContextKey) == true
             )
             .ForAll(ValidateAndReport(context));
     }
