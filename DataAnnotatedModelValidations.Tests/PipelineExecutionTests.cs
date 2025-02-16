@@ -1,4 +1,5 @@
 ﻿using DataAnnotatedModelValidations.Attributes;
+using System;
 
 namespace DataAnnotatedModelValidations.Tests;
 
@@ -111,6 +112,8 @@ public class PipelineExecutionTests
     [InlineData("mutation { setSampleRecord(obj: { email: \"\" }) { email } }", 1, "setSampleRecord_blank_email_required")]
     [InlineData("mutation { setSampleRecordInline(obj: { email: \"\" }) { email } }", 1, "setSampleRecordInline_blank_email_required")]
     [InlineData("mutation { setSampleRecordWithSynthesizedProperty(obj: { email: \"\" }) { email } }", 1, "setSampleRecordWithSynthesizedProperty_blank_email_required")]
+    [InlineData("mutation { setSampleRecordWithTopLevelValidationAttribute(obj: { email: \"a@a.com\" }) { email } }", null, "setSampleRecordWithTopLevelValidationAttribute_and_all_properties_filled")]
+    [InlineData("mutation { setSampleRecordWithTopLevelValidationAttribute(obj: { email: null }) { email } }", 1, "setSampleRecordWithTopLevelValidationAttribute_at_least_property_required")]
     [InlineData("mutation { setText(txt: \"abc\") }", 1, "setText_min_length_5")]
     [InlineData("""
         mutation { 
@@ -166,6 +169,25 @@ public class PipelineExecutionTests
         result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
 
+    [AttributeUsage(AttributeTargets.Class)]
+    public class AtLeastOneValueMustBeFilledAttribute : ValidationAttribute
+    {
+        public string[] Ignore { get; set; } = [];
+
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) => (value, Ignore) switch
+        {
+            { value: { } obj, Ignore.Length: > 0 } when
+                obj.GetType().IsClass
+                && obj.GetType().GetProperties().ExceptBy(Ignore, p => p.Name).All(p => p.GetValue(obj, null) is null) =>
+                new($"At least one field must contain data. Excluded fields from validation: {string.Join(", ", Ignore)}"),
+            { value: { } obj, Ignore: _ } when
+                obj.GetType().IsClass
+                && obj.GetType().GetProperties().All(p => p.GetValue(obj, null) is null) =>
+                new("At least one field must contain data"),
+            _ => ValidationResult.Success
+        };
+    }
+
     public record SampleResponse
     {
         public string Name { get; init; } = string.Empty;
@@ -188,6 +210,9 @@ public class PipelineExecutionTests
         [EmailAddress]
         public string? Email { get; set; }
     }
+
+    [AtLeastOneValueMustBeFilled]
+    public record SampleRecordWithTopLevelValidationAttribute(string? Email);
 
     public class Sample : IValidatableObject
     {
@@ -447,6 +472,8 @@ public class PipelineExecutionTests
         public SampleRecord? SetSampleRecord(SampleRecord? obj) => obj;
 
         public SampleRecordWithSynthesizedProperty? SetSampleRecordWithSynthesizedProperty(SampleRecordWithSynthesizedProperty? obj) => obj;
+
+        public SampleRecordWithTopLevelValidationAttribute? SetSampleRecordWithTopLevelValidationAttribute(SampleRecordWithTopLevelValidationAttribute? obj) => obj;
     }
 
     [ExtendObjectType(OperationTypeNames.Mutation)]
