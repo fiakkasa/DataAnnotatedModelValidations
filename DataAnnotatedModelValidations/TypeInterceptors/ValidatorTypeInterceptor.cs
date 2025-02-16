@@ -47,14 +47,20 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
                     isValidatable = true;
                 }
                 else if (
+                    // implements IValidatableObject
                     parameter.ParameterType.IsAssignableTo(Consts.ValidatableType)
+                    // annotated with ValidationType attribute
+                    || parameter.ParameterType.GetCustomAttributes(Consts.ValidationType, true).Length > 0
+                    // any property is annotated with a ValidationType attribute
                     || parameter
                         .ParameterType
                         .GetProperties()
                         .Any(prop => prop.GetCustomAttributes(Consts.ValidationType, true).Length > 0)
                 )
                 {
-                    argument.ContextData[Consts.ArgumentValidationContextKey] = Array.Empty<object>();
+                    // Validator.TryValidateObject will be called for this argument and the argument
+                    // will be validated according to the validation attributes or implementation of IValidatableObject
+                    argument.ContextData[Consts.ArgumentValidationContextKey] = true;
                     isValidatable = true;
                 }
             }
