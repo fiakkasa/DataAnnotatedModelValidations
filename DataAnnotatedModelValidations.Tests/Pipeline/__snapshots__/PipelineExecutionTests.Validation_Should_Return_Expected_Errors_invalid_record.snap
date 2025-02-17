@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "The Email field is not a valid e-mail address.",
+      "message": "The field of type HotChocolate.Optional`1[System.String] must be a string, array or ICollection type for validation attribute MaxLengthAttribute.",
       "locations": [
         {
           "line": 1,
@@ -9,19 +9,16 @@
         }
       ],
       "path": [
-        "sampleWithService",
-        "obj",
-        "email"
+        "invalidRecord",
+        "obj"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "sampleWithService",
+        "field": "invalidRecord",
         "type": "Query",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
-  "data": {
-    "sampleWithService": null
-  }
+  "data": null
 }

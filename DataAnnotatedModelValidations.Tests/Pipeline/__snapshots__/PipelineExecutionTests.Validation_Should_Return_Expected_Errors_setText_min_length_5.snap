@@ -1,27 +1,26 @@
 ﻿{
   "errors": [
     {
-      "message": "The Email field is required.",
+      "message": "The field txt must be a string with a minimum length of 5 and a maximum length of 100.",
       "locations": [
         {
           "line": 1,
-          "column": 3
+          "column": 12
         }
       ],
       "path": [
-        "sample",
-        "obj",
-        "email"
+        "setText",
+        "txt"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "sample",
-        "type": "Query",
+        "field": "setText",
+        "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "sample": null
+    "setText": null
   }
 }

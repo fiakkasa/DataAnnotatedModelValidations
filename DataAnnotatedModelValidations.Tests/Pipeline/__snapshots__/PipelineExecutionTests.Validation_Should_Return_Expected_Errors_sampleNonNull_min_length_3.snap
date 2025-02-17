@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "The Email field is required.",
+      "message": "The field Name must be a string with a minimum length of 3 and a maximum length of 100.",
       "locations": [
         {
           "line": 1,
@@ -9,19 +9,17 @@
         }
       ],
       "path": [
-        "sampleAlias",
+        "sampleNonNull",
         "obj",
-        "email"
+        "name"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "sample",
+        "field": "sampleNonNull",
         "type": "Query",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
-  "data": {
-    "sampleAlias": null
-  }
+  "data": null
 }

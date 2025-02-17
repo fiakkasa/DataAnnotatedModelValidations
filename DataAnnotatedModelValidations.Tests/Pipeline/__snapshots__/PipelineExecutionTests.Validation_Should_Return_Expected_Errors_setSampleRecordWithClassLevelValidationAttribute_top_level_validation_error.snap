@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "The Email field is required.",
+      "message": "All string fields must be filled.",
       "locations": [
         {
           "line": 1,
@@ -9,19 +9,18 @@
         }
       ],
       "path": [
-        "setSample",
-        "obj",
-        "email"
+        "setSampleRecordWithClassLevelValidationAttribute",
+        "obj"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setSample",
+        "field": "setSampleRecordWithClassLevelValidationAttribute",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "setSample": null
+    "setSampleRecordWithClassLevelValidationAttribute": null
   }
 }

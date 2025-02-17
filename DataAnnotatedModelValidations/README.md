@@ -16,6 +16,7 @@ In addition, individual method arguments can be validated using annotations from
 
 | HotChocolate Version | DataAnnotatedModelValidations Version | .NET Version |
 |----------------------|---------------------------------------|--------------|
+| 15.0.3 or higher     | 8.1.0                                 | .NET 8, 9    |
 | 15.0.3 or higher     | 8.0.1                                 | .NET 8, 9    |
 | 15.0.3 or higher     | 8.0.0                                 | .NET 8, 9    |
 | 15.0.3 or higher     | 7.0.0                                 | .NET 8, 9    |
@@ -83,7 +84,7 @@ In C# one may define models in a multitude of ways.
 
 To help alleviate potential issues consider the following:
 
-#### Standard Classes
+#### Standard Classes or Records with declared properties
 
 ```csharp
 public class Sample
@@ -93,17 +94,52 @@ public class Sample
     [EmailAddress]
     public string? Email { get; set; }
 }
-```
 
-#### Records with declared properties
-
-```csharp
-public record Sample
+public record SampleRecord
 {
     [Required]
     [MinLength(3)]
     [EmailAddress]
     public string? Email { get; set; }
+}
+```
+
+#### Standard Classes or Records with declared properties using top level attributes
+
+```csharp
+[MyCustomObjectValidator]
+public class Sample
+{
+    [Required]
+    [MinLength(3)]
+    [EmailAddress]
+    public string? Email { get; set; }
+}
+
+[MyCustomObjectValidator]
+public record SampleRecord
+{
+    [Required]
+    [MinLength(3)]
+    [EmailAddress]
+    public string? Email { get; set; }
+}
+```
+
+#### Standard Classes or Records with inline parameter level attributes
+
+```csharp
+public class Sample
+{
+    [Required]
+    [MinLength(3)]
+    [EmailAddress]
+    public string? Email { get; set; }
+}
+
+public class Query
+{
+    public Sample? GetSampleWithParameterLevelAttribute([MyCustomObjectValidator] Sample? sample) => sample;
 }
 ```
 

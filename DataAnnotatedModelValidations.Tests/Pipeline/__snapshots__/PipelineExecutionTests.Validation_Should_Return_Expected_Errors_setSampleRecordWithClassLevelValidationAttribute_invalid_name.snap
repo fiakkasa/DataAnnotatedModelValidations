@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "The field txt must be a string or array type with a minimum length of '5'.",
+      "message": "The field Name must be a string with a minimum length of 3 and a maximum length of 100.",
       "locations": [
         {
           "line": 1,
@@ -9,18 +9,19 @@
         }
       ],
       "path": [
-        "setText",
-        "txt"
+        "setSampleRecordWithClassLevelValidationAttribute",
+        "obj",
+        "name"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setText",
+        "field": "setSampleRecordWithClassLevelValidationAttribute",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "setText": null
+    "setSampleRecordWithClassLevelValidationAttribute": null
   }
 }

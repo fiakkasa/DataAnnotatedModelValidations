@@ -1,27 +1,27 @@
 ﻿{
   "errors": [
     {
-      "message": "The Email field is required.",
+      "message": "The field Name must be a string with a minimum length of 3 and a maximum length of 100.",
       "locations": [
         {
           "line": 1,
-          "column": 12
+          "column": 3
         }
       ],
       "path": [
-        "setSampleRecordWithSynthesizedProperty",
+        "sample",
         "obj",
-        "email"
+        "name"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setSampleRecordWithSynthesizedProperty",
-        "type": "Mutation",
+        "field": "sample",
+        "type": "Query",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "setSampleRecordWithSynthesizedProperty": null
+    "sample": null
   }
 }
