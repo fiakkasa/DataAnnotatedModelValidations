@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "`email` is a required field and cannot be null.",
+      "message": "`name` is a required field and cannot be null.",
       "locations": [
         {
           "line": 1,
@@ -12,7 +12,7 @@
         "sample"
       ],
       "extensions": {
-        "field": "email",
+        "field": "name",
         "specifiedBy": "https://spec.graphql.org/October2021/#sec-Input-Object-Required-Fields"
       }
     }

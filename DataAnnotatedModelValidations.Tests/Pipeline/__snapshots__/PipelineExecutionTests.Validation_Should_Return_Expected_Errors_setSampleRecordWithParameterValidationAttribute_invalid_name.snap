@@ -1,7 +1,7 @@
 ﻿{
   "errors": [
     {
-      "message": "At least one field must contain data",
+      "message": "The field Name must be a string with a minimum length of 3 and a maximum length of 100.",
       "locations": [
         {
           "line": 1,
@@ -9,18 +9,19 @@
         }
       ],
       "path": [
-        "setSampleRecordWithTopLevelValidationAttribute",
-        "obj"
+        "setSampleRecordWithParameterValidationAttribute",
+        "obj",
+        "name"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setSampleRecordWithTopLevelValidationAttribute",
+        "field": "setSampleRecordWithParameterValidationAttribute",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "setSampleRecordWithTopLevelValidationAttribute": null
+    "setSampleRecordWithParameterValidationAttribute": null
   }
 }

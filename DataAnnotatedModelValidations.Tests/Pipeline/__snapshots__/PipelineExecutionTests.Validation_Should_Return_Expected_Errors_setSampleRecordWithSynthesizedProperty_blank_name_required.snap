@@ -1,26 +1,27 @@
 ﻿{
   "errors": [
     {
-      "message": "The field txt must be a string or array type with a minimum length of '5'.",
+      "message": "The Name field is required.",
       "locations": [
         {
           "line": 1,
-          "column": 3
+          "column": 12
         }
       ],
       "path": [
-        "text",
-        "txt"
+        "setSampleRecordWithSynthesizedProperty",
+        "obj",
+        "name"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "text",
-        "type": "Query",
+        "field": "setSampleRecordWithSynthesizedProperty",
+        "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
   "data": {
-    "text": null
+    "setSampleRecordWithSynthesizedProperty": null
   }
 }

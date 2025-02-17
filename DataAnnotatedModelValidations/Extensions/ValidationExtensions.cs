@@ -1,7 +1,65 @@
+using DataAnnotatedModelValidations.Models;
+
 namespace DataAnnotatedModelValidations.Extensions;
 
 internal static class ValidationExtensions
 {
+    private static bool ValidateAsValue(
+        object item,
+        string itemName,
+        IServiceProvider serviceProvider,
+        List<ValidationResult> validationResults,
+        ValidationAttribute[] attributes
+    ) =>
+        Validator.TryValidateValue(
+            item,
+            new(item, serviceProvider, default)
+            {
+                MemberName = itemName
+            },
+            validationResults,
+            attributes
+        );
+
+    private static bool ValidateAsObject(
+        object item,
+        IServiceProvider serviceProvider,
+        List<ValidationResult> validationResults
+    ) =>
+        Validator.TryValidateObject(
+            item,
+            new(item, serviceProvider, default),
+            validationResults,
+            true
+        );
+
+    // validate top level and subsequently inner validation properties as to mimic the
+    // short-circuiting behavior of a class with a top level validation attribute
+    private static bool ValidateAsValueAndObject(
+        object item,
+        string itemName,
+        IServiceProvider serviceProvider,
+        List<ValidationResult> validationResults,
+        ValidationAttribute[] attributes
+    ) =>
+        ValidateAsValue(item, itemName, serviceProvider, validationResults, attributes)
+        && ValidateAsObject(item, serviceProvider, validationResults);
+
+    private static void AddInvalidCastExceptionValidationMessage(
+        List<ValidationResult> validationResults,
+        InvalidCastException ex
+    ) =>
+        validationResults.Add(
+            new(
+                ex switch
+                {
+                    { TargetSite.DeclaringType.Name: { Length: > 0 } name } =>
+                        $"{ex.Message.TrimEnd('.')} for validation attribute {name}.",
+                    _ => ex.Message
+                }
+            )
+        );
+
     private static (bool success, bool? valueValidation) ValidateItem(
         this IReadOnlyDictionary<string, object?> context,
         object item,
@@ -12,49 +70,39 @@ internal static class ValidationExtensions
     {
         try
         {
-            _ = context.TryGetValue(Consts.ArgumentValidationContextKey, out var attrs);
+            _ = context.TryGetValue(Consts.ArgumentValidationContextKey, out var argumentValidationDefinition);
 
-            return attrs switch
+            return argumentValidationDefinition switch
             {
-                IEnumerable<ValidationAttribute> attributes =>
-                (
-                    success: Validator.TryValidateValue(
-                        item,
-                        new(item, serviceProvider, default)
-                        {
-                            MemberName = itemName
-                        },
-                        validationResults,
-                        attributes
+                ArgumentValidationDefinition
+                    {
+                        UseObjectValidator: false,
+                        ParameterAttributes: { Length: > 0 } attributes
+                    } =>
+                    (
+                        success: ValidateAsValue(item, itemName, serviceProvider, validationResults, attributes),
+                        isValueValidation: true
                     ),
-                    valueValidation: true
-                ),
-                _ =>
-                (
-                    success: Validator.TryValidateObject(
-                        item,
-                        new(item, serviceProvider, default),
-                        validationResults,
-                        true
+                ArgumentValidationDefinition
+                    {
+                        UseObjectValidator: true,
+                        ParameterAttributes: { Length: > 0 } attributes
+                    } =>
+                    (
+                        success: ValidateAsValueAndObject(item, itemName, serviceProvider, validationResults, attributes),
+                        isValueValidation: false
                     ),
-                    valueValidation: false
+                _ => (
+                    success: ValidateAsObject(item, serviceProvider, validationResults),
+                    isValueValidation: false
                 )
             };
         }
         catch (InvalidCastException ex) when (ex.Source == "System.ComponentModel.Annotations")
         {
-            validationResults.Add(
-                new(
-                    ex switch
-                    {
-                        { TargetSite.DeclaringType.Name: { Length: > 0 } name } =>
-                            $"{ex.Message.TrimEnd('.')} for validation attribute {name}",
-                        _ => ex.Message
-                    }
-                )
-            );
+            AddInvalidCastExceptionValidationMessage(validationResults, ex);
 
-            return (success: false, valueValidation: default);
+            return (success: false, default);
         }
     }
 
@@ -68,7 +116,7 @@ internal static class ValidationExtensions
 
             var validationResults = new List<ValidationResult>();
 
-            var (success, valueValidation) =
+            var (success, isValueValidation) =
                 argument.ContextData.ValidateItem(
                     item,
                     argument.Name,
@@ -96,7 +144,7 @@ internal static class ValidationExtensions
                     context.ReportError(
                         argument,
                         contextPathList,
-                        valueValidation,
+                        isValueValidation,
                         validationResult.ErrorMessage
                     );
                     continue;
@@ -107,7 +155,7 @@ internal static class ValidationExtensions
                     context.ReportError(
                         argument,
                         contextPathList,
-                        valueValidation,
+                        isValueValidation,
                         validationResult.ErrorMessage,
                         memberName
                     );

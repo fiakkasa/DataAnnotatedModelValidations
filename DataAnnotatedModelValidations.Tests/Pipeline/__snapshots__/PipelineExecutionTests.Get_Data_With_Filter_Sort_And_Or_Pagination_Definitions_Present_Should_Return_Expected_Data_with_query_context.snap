@@ -3,26 +3,32 @@
     "sampleResponses": {
       "items": [
         {
-          "name": "Jane Doe",
-          "email": null,
-          "numberOfPets": 1,
-          "age": 25
+          "name": "",
+          "info": "unknown_user",
+          "numberOfPets": 0,
+          "age": null
         },
         {
           "name": "Alice Johnson",
-          "email": null,
+          "info": null,
           "numberOfPets": 0,
           "age": null
         },
         {
           "name": "Bob Smith",
-          "email": "bob@smith.com",
+          "info": "bob_smith",
           "numberOfPets": 0,
           "age": null
         },
         {
+          "name": "Jane Doe",
+          "info": null,
+          "numberOfPets": 1,
+          "age": 25
+        },
+        {
           "name": "John Doe",
-          "email": "john@doe.com",
+          "info": "john_doe",
           "numberOfPets": 2,
           "age": 30
         }

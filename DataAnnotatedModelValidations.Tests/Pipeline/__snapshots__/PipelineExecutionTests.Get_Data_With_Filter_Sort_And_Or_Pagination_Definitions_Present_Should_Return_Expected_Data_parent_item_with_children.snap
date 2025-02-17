@@ -6,62 +6,55 @@
           "psf1": {
             "items": [
               {
-                "email": "b@a.com"
+                "name": "Jane"
               }
             ]
           },
           "psf2": {
-            "items": [
-              {
-                "email": "b@a.com"
-              }
-            ]
+            "items": []
           },
           "psf3": {
             "items": [
               {
-                "email": "a@a.com"
-              },
-              {
-                "email": "b@a.com"
+                "name": "Bob"
               }
             ]
           },
           "psf4": {
             "items": [
               {
-                "email": "a@a.com"
+                "name": "Bob"
               },
               {
-                "email": "b@a.com"
+                "name": "Jane"
               }
             ]
           },
           "psf5": {
             "items": [
               {
-                "email": "a@a.com"
+                "name": "Jane"
               },
               {
-                "email": "b@a.com"
+                "name": "Bob"
               }
             ]
           },
           "relatedsf": [
             {
-              "email": "a@a.com"
+              "name": "Jane"
             },
             {
-              "email": "b@a.com"
+              "name": "Bob"
             }
           ],
           "relatedp": {
             "items": [
               {
-                "email": "a@a.com"
+                "name": "Jane"
               },
               {
-                "email": "b@a.com"
+                "name": "Bob"
               }
             ]
           }

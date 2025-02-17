@@ -1,9 +1,16 @@
 ﻿using DataAnnotatedModelValidations.Middleware;
+using DataAnnotatedModelValidations.Models;
+using System.Reflection;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
 
 public sealed class ValidatorTypeInterceptor : TypeInterceptor
 {
+    private FieldMiddleware? _validatorMiddleware;
+
+    private FieldMiddleware ValidatorMiddleware =>
+        _validatorMiddleware ??= FieldClassMiddlewareFactory.Create<ValidatorMiddleware>();
+
     private static IBindableList<ObjectFieldDefinition>? ObjectTypeDefinitionFields(DefinitionBase? definition) =>
         definition switch
         {
@@ -16,6 +23,27 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
             } objectTypeDefinition => objectTypeDefinition.Fields,
             _ => default
         };
+
+    private static ValidationAttribute[] GetValidationAttributes(ParameterInfo parameter) =>
+        parameter.GetCustomAttributes(Consts.ValidationAttributeType, true) switch
+        {
+            ValidationAttribute[] { Length: > 0 } parameterAttributes => parameterAttributes,
+            _ => []
+        };
+
+    private static bool ShouldUseObjectValidator(ParameterInfo parameter) =>
+        parameter.ParameterType.IsClass
+        && (
+            // implements IValidatableObject
+            parameter.ParameterType.IsAssignableTo(Consts.ValidatableObjectType)
+            // annotated with ValidationType attribute
+            || parameter.ParameterType.GetCustomAttributes(Consts.ValidationAttributeType, true).Length > 0
+            // any property is annotated with a ValidationType attribute
+            || parameter
+                .ParameterType
+                .GetProperties()
+                .Any(property => property.GetCustomAttributes(Consts.ValidationAttributeType, true).Length > 0)
+        );
 
     public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, DefinitionBase definition)
     {
@@ -32,35 +60,23 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
             {
                 if (
                     argument is not { Parameter: { } parameter }
-                    || parameter.IsDefined(Consts.IgnoreValidationType, true)
-                    || parameter.ParameterType.IsDefined(Consts.IgnoreValidationType, true)
+                    || parameter.IsDefined(Consts.IgnoreValidationAttributeType, true)
+                    || parameter.ParameterType.IsDefined(Consts.IgnoreValidationAttributeType, true)
                 )
                 {
                     continue;
                 }
 
-                var customAttributes = parameter.GetCustomAttributes(Consts.ValidationType, true);
+                var customParameterAttributes = GetValidationAttributes(parameter);
+                var shouldUseObjectValidator = ShouldUseObjectValidator(parameter);
 
-                if (customAttributes.Length > 0)
+                if (customParameterAttributes.Length > 0 || shouldUseObjectValidator)
                 {
-                    argument.ContextData[Consts.ArgumentValidationContextKey] = customAttributes;
-                    isValidatable = true;
-                }
-                else if (
-                    // implements IValidatableObject
-                    parameter.ParameterType.IsAssignableTo(Consts.ValidatableType)
-                    // annotated with ValidationType attribute
-                    || parameter.ParameterType.GetCustomAttributes(Consts.ValidationType, true).Length > 0
-                    // any property is annotated with a ValidationType attribute
-                    || parameter
-                        .ParameterType
-                        .GetProperties()
-                        .Any(prop => prop.GetCustomAttributes(Consts.ValidationType, true).Length > 0)
-                )
-                {
-                    // Validator.TryValidateObject will be called for this argument and the argument
-                    // will be validated according to the validation attributes or implementation of IValidatableObject
-                    argument.ContextData[Consts.ArgumentValidationContextKey] = true;
+                    argument.ContextData[Consts.ArgumentValidationContextKey] =
+                        new ArgumentValidationDefinition(
+                            shouldUseObjectValidator,
+                            customParameterAttributes
+                        );
                     isValidatable = true;
                 }
             }
@@ -68,9 +84,8 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
             if (isValidatable)
             {
                 field.ContextData[Consts.FieldValidationContextKey] = true;
-                field
-                    .ToDescriptor(discoveryContext.DescriptorContext)
-                    .Use<ValidatorMiddleware>();
+                // add as first middleware to short circuit the pipeline
+                field.MiddlewareDefinitions.Insert(0, new FieldMiddlewareDefinition(ValidatorMiddleware));
             }
         }
     }

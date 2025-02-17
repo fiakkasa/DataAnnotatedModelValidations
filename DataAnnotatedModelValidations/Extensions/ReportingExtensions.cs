@@ -35,7 +35,7 @@ internal static class ReportingExtensions
         this IMiddlewareContext context,
         IInputField argument,
         IReadOnlyCollection<string> contextPathList,
-        bool? valueValidation,
+        bool? isValueValidation,
         string? message = default,
         string? memberName = default
     ) =>
@@ -50,7 +50,7 @@ internal static class ReportingExtensions
                 .SetCode(ReportingConsts.GenericErrorCode)
                 .SetPath(
                     contextPathList.ToArgumentPath(
-                        argument.ToComposedMemberNames(memberName, valueValidation)
+                        argument.ToComposedMemberNames(memberName, isValueValidation)
                     )
                 )
                 .SetExtension(ReportingConsts.FieldName, argument.Coordinate.MemberName)
