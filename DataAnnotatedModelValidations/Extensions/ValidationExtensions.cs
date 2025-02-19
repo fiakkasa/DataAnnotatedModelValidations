@@ -60,7 +60,7 @@ internal static class ValidationExtensions
             )
         );
 
-    private static (bool success, bool? valueValidation) ValidateItem(
+    private static (bool success, bool? isValueValidation) ValidateItem(
         this IReadOnlyDictionary<string, object?> context,
         object item,
         string itemName,
@@ -102,7 +102,7 @@ internal static class ValidationExtensions
         {
             AddInvalidCastExceptionValidationMessage(validationResults, ex);
 
-            return (success: false, default);
+            return (success: false, isValueValidation: default);
         }
     }
 
