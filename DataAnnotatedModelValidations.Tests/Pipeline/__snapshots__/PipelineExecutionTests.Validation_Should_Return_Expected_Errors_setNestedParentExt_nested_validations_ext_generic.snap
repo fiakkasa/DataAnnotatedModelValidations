@@ -9,13 +9,13 @@
         }
       ],
       "path": [
-        "setNestedParentExt",
+        "setNestedParentExtGeneric",
         "obj",
         "child"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setNestedParentExt",
+        "field": "setNestedParentExtGeneric",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
@@ -29,13 +29,13 @@
         }
       ],
       "path": [
-        "setNestedParentExt",
+        "setNestedParentExtGeneric",
         "obj",
         "count"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setNestedParentExt",
+        "field": "setNestedParentExtGeneric",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
@@ -49,7 +49,7 @@
         }
       ],
       "path": [
-        "setNestedParentExt",
+        "setNestedParentExtGeneric",
         "obj",
         "children",
         "_1_",
@@ -57,7 +57,7 @@
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setNestedParentExt",
+        "field": "setNestedParentExtGeneric",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }

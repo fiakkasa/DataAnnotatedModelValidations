@@ -164,7 +164,7 @@ public partial class PipelineExecutionTests
     [InlineData(
         """
         mutation { 
-            setNestedParentExt(obj: { 
+            setNestedParentExtByName(obj: { 
                 child: { count: 0 }, 
                 children: [
                     { count: 1 }, 
@@ -177,7 +177,61 @@ public partial class PipelineExecutionTests
         }
         """,
         3,
-        "setNestedParentExt_nested_validations_ext"
+        "setNestedParentExt_nested_validations_ext_byName"
+    )]
+    [InlineData(
+        """
+        mutation { 
+            setNestedParentExtByOpType(obj: { 
+                child: { count: 0 }, 
+                children: [
+                    { count: 1 }, 
+                    { count: 0 }
+                ] 
+            }) { 
+                child { count } 
+                children { count } 
+            } 
+        }
+        """,
+        3,
+        "setNestedParentExt_nested_validations_ext_byOpType"
+    )]
+    [InlineData(
+        """
+        mutation { 
+            setNestedParentExtByType(obj: { 
+                child: { count: 0 }, 
+                children: [
+                    { count: 1 }, 
+                    { count: 0 }
+                ] 
+            }) { 
+                child { count } 
+                children { count } 
+            } 
+        }
+        """,
+        3,
+        "setNestedParentExt_nested_validations_ext_byType"
+    )]
+    [InlineData(
+        """
+        mutation { 
+            setNestedParentExtGeneric(obj: { 
+                child: { count: 0 }, 
+                children: [
+                    { count: 1 }, 
+                    { count: 0 }
+                ] 
+            }) { 
+                child { count } 
+                children { count } 
+            } 
+        }
+        """,
+        3,
+        "setNestedParentExt_nested_validations_ext_generic"
     )]
     public async Task Validation_Should_Return_Expected_Errors(string query, int? numberOfErrors, string description)
     {
@@ -189,7 +243,10 @@ public partial class PipelineExecutionTests
                 .AddQueryType<Query>()
                 .AddMutationType<Mutation>()
                 .AddTypeExtension<QueryExtension>()
-                .AddTypeExtension<MutationExtension>()
+                .AddTypeExtension<MutationExtensionByName>()
+                .AddTypeExtension<MutationExtensionByOperationType>()
+                .AddTypeExtension<MutationExtensionByType>()
+                .AddTypeExtension<MutationExtensionGeneric>()
                 .AddSorting()
                 .AddFiltering()
                 .ExecuteRequestAsync(query)
