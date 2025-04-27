@@ -24,8 +24,8 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
 
     private static bool IsRootOperationTypeName(string? name) =>
         name is OperationTypeNames.Query
-             or OperationTypeNames.Mutation
-             or OperationTypeNames.Subscription;
+            or OperationTypeNames.Mutation
+            or OperationTypeNames.Subscription;
 
     private static ValidationAttribute[] GetValidationAttributes(ParameterInfo parameter) =>
         parameter.GetCustomAttributes(Consts.ValidationAttributeType, true) switch
