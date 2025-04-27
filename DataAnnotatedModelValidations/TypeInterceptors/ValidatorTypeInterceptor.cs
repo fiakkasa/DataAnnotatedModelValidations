@@ -14,15 +14,18 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
     private static IBindableList<ObjectFieldDefinition>? ObjectTypeDefinitionFields(DefinitionBase? definition) =>
         definition switch
         {
-            ObjectTypeDefinition
-            {
-                Name: OperationTypeNames.Query
-                or OperationTypeNames.Mutation
-                or OperationTypeNames.Subscription,
-                Fields.Count: > 0
-            } objectTypeDefinition => objectTypeDefinition.Fields,
+            ObjectTypeDefinition { Fields.Count: > 0 } objectTypeDefinition
+                when IsRootOperationType(objectTypeDefinition) => objectTypeDefinition.Fields,
             _ => default
         };
+
+    private static bool IsRootOperationType(ObjectTypeDefinition objectTypeDefinition) =>
+        IsRootOperationTypeName(objectTypeDefinition.ExtendsType?.Name ?? objectTypeDefinition.Name);
+
+    private static bool IsRootOperationTypeName(string? name) =>
+        name is OperationTypeNames.Query
+             or OperationTypeNames.Mutation
+             or OperationTypeNames.Subscription;
 
     private static ValidationAttribute[] GetValidationAttributes(ParameterInfo parameter) =>
         parameter.GetCustomAttributes(Consts.ValidationAttributeType, true) switch

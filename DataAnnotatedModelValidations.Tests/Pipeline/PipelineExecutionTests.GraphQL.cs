@@ -1,4 +1,5 @@
 using DataAnnotatedModelValidations.Attributes;
+using HotChocolate.Language;
 
 namespace DataAnnotatedModelValidations.Tests.Pipeline;
 
@@ -69,7 +70,7 @@ public partial class PipelineExecutionTests
 
         public string? GetText([StringLength(100, MinimumLength = 5)] string? txt) => txt;
 
-        public string? GetTextIgnoreValidation([IgnoreModelValidation] [StringLength(100, MinimumLength = 5)] string? txt) => txt;
+        public string? GetTextIgnoreValidation([IgnoreModelValidation][StringLength(100, MinimumLength = 5)] string? txt) => txt;
 
         public Sample? GetSample(Sample? obj) => obj;
 
@@ -111,9 +112,27 @@ public partial class PipelineExecutionTests
     }
 
     [ExtendObjectType(OperationTypeNames.Mutation)]
-    public class MutationExtension
+    public class MutationExtensionByName
     {
-        public NestedParent SetNestedParentExt([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+        public NestedParent SetNestedParentExtByName([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+    }
+
+    [ExtendObjectType(OperationType.Mutation)]
+    public class MutationExtensionByOperationType
+    {
+        public NestedParent SetNestedParentExtByOpType([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+    }
+
+    [ExtendObjectType(typeof(Mutation))]
+    public class MutationExtensionByType
+    {
+        public NestedParent SetNestedParentExtByType([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+    }
+
+    [ExtendObjectType<Mutation>]
+    public class MutationExtensionGeneric
+    {
+        public NestedParent SetNestedParentExtGeneric([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
     }
 
     [ExtendObjectType<Sample>]
