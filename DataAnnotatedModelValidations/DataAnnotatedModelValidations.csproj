@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <PackageReference Include="HotChocolate.Execution" Version="15.1.11" />
-    <PackageReference Include="Humanizer" Version="3.0.1" />
   </ItemGroup>
 
   <ItemGroup>

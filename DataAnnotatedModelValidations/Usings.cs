@@ -5,7 +5,6 @@ global using HotChocolate.Types.Descriptors.Definitions;
 global using HotChocolate.Types.Descriptors;
 global using HotChocolate.Types;
 global using HotChocolate;
-global using Humanizer;
 global using Microsoft.Extensions.DependencyInjection;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
