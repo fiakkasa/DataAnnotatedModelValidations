@@ -1,43 +1,52 @@
-using DataAnnotatedModelValidations.Utils;
-
 namespace DataAnnotatedModelValidations.Extensions;
 
 internal static class StringExtensions
 {
-    /// <summary>
-    /// Formats a field name to camelCase.
-    /// </summary>
-    /// <remarks>
-    /// Examples:
-    /// <list type="bullet">
-    ///   <item><c>FOOBar</c> → <c>fooBar</c></item>
-    ///   <item><c>FOO1Ar</c> → <c>foo1Ar</c></item>
-    ///   <item><c>FOO_Ar</c> → <c>foo_Ar</c></item>
-    ///   <item><c>ID</c> → <c>id</c></item>
-    /// </list>
-    /// </remarks>
-    internal static string Camelize(this string fieldName)
+    // Adaption of HC FormatFieldName(string fieldName)
+    // @see HotChocolate.Types.Descriptors.NameFormattingHelpers.FormatFieldName
+    internal static string Camelize(this string memberName)
     {
-        ArgumentException.ThrowIfNullOrEmpty(fieldName);
+        ArgumentException.ThrowIfNullOrEmpty(memberName);
 
-        // If the first character is already lowercase, return as is.
-        if (char.IsLower(fieldName[0]))
+        // quick exit
+        if (char.IsLower(memberName[0]))
         {
-            return fieldName;
+            return memberName;
         }
 
-        return RegexUtils.LeadingUppercaseRegularExpression.Replace(fieldName, match =>
-        {
-            var upper = match.Value;
-            var nextIndex = match.Length;
+        return string.Create(
+            length: memberName.Length, 
+            state: memberName, 
+            (output, fieldName) =>
+            {
+                int p = 0;
+                for (; p < fieldName.Length && char.IsLetter(fieldName[p]) && char.IsUpper(fieldName[p]); p++)
+                {
+                    output[p] = char.ToLowerInvariant(fieldName[p]);
+                }
 
-            // If only one uppercase char, or followed by non-letter, lowercase all
-            if (upper.Length == 1 || nextIndex >= fieldName.Length || !char.IsLower(fieldName[nextIndex]))
-                return upper.ToLowerInvariant();
+                // in case more than one character is upper case, we uppercase
+                // the current character. We only uppercase the character
+                // back if the last character is a letter
+                //
+                // before    after      result
+                // FOOBar    FOOBar   = fooBar
+                //    ^        ^
+                // FOO1Ar    FOO1Ar   = foo1Ar
+                //   ^         ^
+                // FOO_Ar    FOO_Ar   = foo_Ar
+                //   ^         ^
+                if (p < fieldName.Length && p > 1 && char.IsLetter(fieldName[p]))
+                {
+                    output[p - 1] = char.ToUpperInvariant(output[p - 1]);
+                }
 
-            // Multiple uppercase chars followed by lowercase: keep last uppercase
-            // (it starts the next camelCase word)
-            return upper[..^1].ToLowerInvariant() + upper[^1];
-        });
+                // Copy the rest unchanged
+                for (; p < fieldName.Length; p++)
+                {
+                    output[p] = fieldName[p];
+                }
+            }
+        );
     }
 }
