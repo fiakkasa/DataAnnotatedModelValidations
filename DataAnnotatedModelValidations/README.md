@@ -16,17 +16,18 @@ In addition, individual method arguments can be validated using annotations from
 
 | HotChocolate Version | DataAnnotatedModelValidations Version | .NET Version  |
 | -------------------- | ------------------------------------- | ------------- |
-| 15.1.11 or higher    | 9.0.0                                 | .NET 8, 9, 10 |
-| 15.0.3 or higher     | 8.1.2                                 | .NET 8, 9     |
-| 15.0.3 or higher     | 8.1.1                                 | .NET 8, 9     |
-| 15.0.3 or higher     | 8.1.0                                 | .NET 8, 9     |
-| 15.0.3 or higher     | 8.0.1                                 | .NET 8, 9     |
-| 15.0.3 or higher     | 8.0.0                                 | .NET 8, 9     |
-| 15.0.3 or higher     | 7.0.0                                 | .NET 8, 9     |
-| 14.3.0 or higher     | 6.3.0                                 | .NET 8, 9     |
-| 14.2.0 or higher     | 6.2.0                                 | .NET 8, 9     |
-| 14.1.0 or higher     | 6.1.0                                 | .NET 8, 9     |
-| 14.0.0 or higher     | 6.0.0                                 | .NET 8        |
+| 15.1.11 or higher    | 10.0.0                                | .NET 8, 9, 10 |
+| 15.1.11 or higher    |  9.0.0                                | .NET 8, 9, 10 |
+| 15.0.3 or higher     |  8.1.2                                | .NET 8, 9     |
+| 15.0.3 or higher     |  8.1.1                                | .NET 8, 9     |
+| 15.0.3 or higher     |  8.1.0                                | .NET 8, 9     |
+| 15.0.3 or higher     |  8.0.1                                | .NET 8, 9     |
+| 15.0.3 or higher     |  8.0.0                                | .NET 8, 9     |
+| 15.0.3 or higher     |  7.0.0                                | .NET 8, 9     |
+| 14.3.0 or higher     |  6.3.0                                | .NET 8, 9     |
+| 14.2.0 or higher     |  6.2.0                                | .NET 8, 9     |
+| 14.1.0 or higher     |  6.1.0                                | .NET 8, 9     |
+| 14.0.0 or higher     |  6.0.0                                | .NET 8        |
 
 ### Past Releases
 
