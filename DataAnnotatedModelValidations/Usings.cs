@@ -1,7 +1,7 @@
 global using HotChocolate.Configuration;
 global using HotChocolate.Execution.Configuration;
 global using HotChocolate.Resolvers;
-global using HotChocolate.Types.Descriptors.Definitions;
+global using HotChocolate.Types.Descriptors.Configurations;
 global using HotChocolate.Types;
 global using HotChocolate;
 global using Microsoft.Extensions.DependencyInjection;

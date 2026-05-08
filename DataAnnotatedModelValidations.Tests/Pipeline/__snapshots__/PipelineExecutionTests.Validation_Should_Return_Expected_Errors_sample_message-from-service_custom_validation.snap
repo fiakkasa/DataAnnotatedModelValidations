@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "Splash!",
-      "locations": [
-        {
-          "line": 1,
-          "column": 3
-        }
-      ],
       "path": [
         "sample",
         "obj"

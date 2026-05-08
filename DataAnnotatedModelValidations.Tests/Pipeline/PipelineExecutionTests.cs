@@ -78,18 +78,18 @@ public partial class PipelineExecutionTests
 
         var result = await requestExecutor.ExecuteAsync(query);
 
-        Assert.Null(result.ExpectOperationResult().Errors);
+        Assert.Empty(result.ExpectOperationResult().Errors);
         result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
 
     [Theory]
-    [InlineData("""{ info }""", null, "info")]
-    [InlineData("""{ message }""", null, "message")]
+    [InlineData("""{ info }""", 0, "info")]
+    [InlineData("""{ message }""", 0, "message")]
     [InlineData("""{ invalidRecord(obj: { text: "test" }) { text } }""", 1, "invalid_record")]
     [InlineData("""{ invalidRecordExt(obj: { text: "test" }) { text } }""", 1, "invalid_record_ext")]
-    [InlineData("""{ sample(obj: null) { name } }""", null, "sample_null_no_errors")]
+    [InlineData("""{ sample(obj: null) { name } }""", 0, "sample_null_no_errors")]
     [InlineData("""{ sample(obj: { name: "" }) { name } }""", 1, "sample_blank_name_required")]
-    [InlineData("""{ sample(obj: { name: "Jane" }) { name } }""", null, "sample_no_errors")]
+    [InlineData("""{ sample(obj: { name: "Jane" }) { name } }""", 0, "sample_no_errors")]
     [InlineData("""{ sample(obj: { name: "ab" }) { name } }""", 1, "sample_min_length_3")]
     [InlineData("""{ sample(obj: { name: "empty-property-name" }) { name } }""", 1, "sample_empty-property-name_custom_validation")]
     [InlineData("""{ sample(obj: { name: "message-from-service" }) { name } }""", 1, "sample_message-from-service_custom_validation")]
@@ -98,17 +98,20 @@ public partial class PipelineExecutionTests
     [InlineData("""{ sample(obj: { name: "null-error-message" }) { name } }""", 1, "sample_null-error-message_custom_validation")]
     [InlineData("""{ sample(obj: { name: null }) { name } }""", 1, "sample_required")]
     [InlineData("""{ sampleAlias:sample(obj: { name: "" }) { name } }""", 1, "sample_alias_blank_name_required")]
-    [InlineData("""{ sampleIgnoreValidation(obj: null) { name } }""", null, "sampleIgnoreValidation_no_errors")]
+    [InlineData("""{ sampleIgnoreValidation(obj: null) { name } }""", 0, "sampleIgnoreValidation_no_errors")]
     [InlineData("""{ sampleNonNull(obj: null) { name } }""", 1, "sampleNonNull_required")]
     [InlineData("""{ sampleNonNull(obj: { name: "ab" }) { name } }""", 1, "sampleNonNull_min_length_3")]
-    [InlineData("""{ sampleWithService(obj: { name: "Jane" }) { name } }""", null, "sampleWithService_no_errors")]
+    [InlineData("""{ sampleWithService(obj: { name: "Jane" }) { name } }""", 0, "sampleWithService_no_errors")]
     [InlineData("""{ text(txt: "abc") }""", 1, "text_min_length_5")]
-    [InlineData("""{ text(txt: "abcdefg") }""", null, "text_no_errors")]
+    [InlineData("""{ text(txt: "abcdefg") }""", 0, "text_no_errors")]
     [InlineData("""{ textAlias:text(txt: "abc") }""", 1, "text_alias_min_length_5")]
-    [InlineData("""{ textIgnoreValidation(txt: "a") }""", null, "textIgnoreValidation_no_errors")]
+    [InlineData("""{ textIgnoreValidation(txt: "a") }""", 0, "textIgnoreValidation_no_errors")]
     [InlineData("""mutation { setText(txt: "abc") }""", 1, "setText_min_length_5")]
     [InlineData("""mutation { setSample(obj: { name: "" }) { name } }""", 1, "setSample_blank_name_required")]
+    [InlineData("""mutation { setSampleHcNullError(obj: { name: "" }) { name } }""", 2, "setSample_hc_null_error_blank_name_required")]
     [InlineData("""mutation { setSampleRecord(obj: { name: "" }) { name } }""", 1, "setSampleRecord_blank_name_required")]
+    [InlineData("""mutation { setFunkyRecord(obj: { text: "" }) { text } }""", 0, "setFunkyRecord_no_errors")]
+    [InlineData("""mutation { setNoValidationRecord(obj: { text: "" }) { text } }""", 0, "setNoValidationRecord_no_errors")]
     [InlineData(
         """mutation { setSampleRecordWithSynthesizedProperty(obj: { name: "" }) { name } }""",
         1,
@@ -126,7 +129,7 @@ public partial class PipelineExecutionTests
     )]
     [InlineData(
         """mutation { setSampleRecordWithClassLevelValidationAttribute(obj: { name: "Jane" info: "info" }) { name info } }""",
-        null,
+        0,
         "setSampleRecordWithClassLevelValidationAttribute_no_errors"
     )]
     [InlineData("""mutation { setSampleRecordWithParameterValidationAttribute(obj: { name: "" info: "" }) { name info } }""",
@@ -140,7 +143,7 @@ public partial class PipelineExecutionTests
     )]
     [InlineData(
         """mutation { setSampleRecordWithParameterValidationAttribute(obj: { name: "Jane" info: "info"  }) { name info } }""",
-        null,
+        0,
         "setSampleRecordWithParameterValidationAttribute_no_errors"
     )]
     [InlineData(
@@ -160,6 +163,29 @@ public partial class PipelineExecutionTests
         """,
         3,
         "setNestedParent_nested_validations"
+    )]
+    [InlineData(
+        """
+        mutation { 
+            setNestedParent(obj: { 
+                child: { count: 0 }, 
+                children: [
+                    { count: 0 },
+                    { count: 1 }, 
+                    { count: 0 },
+                    { count: 1 }, 
+                    { count: 0 },
+                    { count: 1 }, 
+                    { count: 0 }
+                ] 
+            }) { 
+                child { count } 
+                children { count } 
+            } 
+        }
+        """,
+        6,
+        "setNestedParent_multiple_nested_validations"
     )]
     [InlineData(
         """
@@ -233,7 +259,7 @@ public partial class PipelineExecutionTests
         3,
         "setNestedParentExt_nested_validations_ext_generic"
     )]
-    public async Task Validation_Should_Return_Expected_Errors(string query, int? numberOfErrors, string description)
+    public async Task Validation_Should_Return_Expected_Errors(string query, int numberOfErrors, string description)
     {
         var result =
             await new ServiceCollection()

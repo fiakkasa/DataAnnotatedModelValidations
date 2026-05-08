@@ -13,7 +13,7 @@ internal static class ReportingExtensions
             .Select(GetNormalizedMemberName);
 
     internal static IEnumerable<string> ToComposedMemberNames(
-        this IInputField argument,
+        this Argument argument,
         string? memberName,
         bool? valueValidation
     ) =>
@@ -33,7 +33,7 @@ internal static class ReportingExtensions
 
     internal static void ReportError(
         this IMiddlewareContext context,
-        IInputField argument,
+        Argument argument,
         IReadOnlyCollection<string> contextPathList,
         bool? isValueValidation,
         string? message = default,

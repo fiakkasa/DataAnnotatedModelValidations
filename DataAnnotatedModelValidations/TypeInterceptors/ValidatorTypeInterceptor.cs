@@ -1,5 +1,6 @@
 ﻿using DataAnnotatedModelValidations.Middleware;
 using DataAnnotatedModelValidations.Models;
+using HotChocolate.Language;
 using System.Reflection;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
@@ -11,15 +12,15 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
     private FieldMiddleware ValidatorMiddleware =>
         _validatorMiddleware ??= FieldClassMiddlewareFactory.Create<ValidatorMiddleware>();
 
-    private static IBindableList<ObjectFieldDefinition>? ObjectTypeDefinitionFields(DefinitionBase? definition) =>
-        definition switch
+    private static IBindableList<ObjectFieldConfiguration>? ObjectTypeDefinitionFields(TypeSystemConfiguration? configuration) =>
+        configuration switch
         {
-            ObjectTypeDefinition { Fields.Count: > 0 } objectTypeDefinition
-                when IsRootOperationType(objectTypeDefinition) => objectTypeDefinition.Fields,
+            ObjectTypeConfiguration { Fields.Count: > 0 } objectTypeConfiguration
+                when IsRootOperationType(objectTypeConfiguration) => objectTypeConfiguration.Fields,
             _ => default
         };
-
-    private static bool IsRootOperationType(ObjectTypeDefinition objectTypeDefinition) =>
+    
+    private static bool IsRootOperationType(ObjectTypeConfiguration objectTypeDefinition) =>
         IsRootOperationTypeName(objectTypeDefinition.ExtendsType?.Name ?? objectTypeDefinition.Name);
 
     private static bool IsRootOperationTypeName(string? name) =>
@@ -48,9 +49,9 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
                 .Any(property => property.GetCustomAttributes(Consts.ValidationAttributeType, true).Length > 0)
         );
 
-    public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, DefinitionBase definition)
+    public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, TypeSystemConfiguration configuration)
     {
-        if (ObjectTypeDefinitionFields(definition) is not { } fields)
+        if (ObjectTypeDefinitionFields(configuration) is not { } fields)
         {
             return;
         }
@@ -75,20 +76,23 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
 
                 if (customParameterAttributes.Length > 0 || shouldUseObjectValidator)
                 {
-                    argument.ContextData[Consts.ArgumentValidationContextKey] =
+                    argument.Features.Set(
                         new ArgumentValidationDefinition(
                             shouldUseObjectValidator,
                             customParameterAttributes
-                        );
+                        )
+                    );
                     isValidatable = true;
                 }
             }
 
             if (isValidatable)
             {
-                field.ContextData[Consts.FieldValidationContextKey] = true;
                 // add as first middleware to short circuit the pipeline
-                field.MiddlewareDefinitions.Insert(0, new FieldMiddlewareDefinition(ValidatorMiddleware));
+                field.MiddlewareConfigurations.Insert(
+                    0, 
+                    new FieldMiddlewareConfiguration(ValidatorMiddleware)
+                );
             }
         }
     }

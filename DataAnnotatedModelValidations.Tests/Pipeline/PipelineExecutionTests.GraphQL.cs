@@ -70,24 +70,24 @@ public partial class PipelineExecutionTests
 
         public string? GetText([StringLength(100, MinimumLength = 5)] string? txt) => txt;
 
-        public string? GetTextIgnoreValidation([IgnoreModelValidation] [StringLength(100, MinimumLength = 5)] string? txt) => txt;
+        public string? GetTextIgnoreValidation([IgnoreModelValidation][StringLength(100, MinimumLength = 5)] string? txt) => txt;
 
         public Sample? GetSample(Sample? obj) => obj;
 
-        public Sample GetSampleNonNull(Sample obj) => obj;
+        public Sample? GetSampleNonNull(Sample obj) => obj;
 
         public Sample? GetSampleIgnoreValidation([IgnoreModelValidation] Sample? obj) => obj;
 
         public Sample? GetSampleWithService(Sample? obj, [Service] MockService service) =>
             service.Get(obj?.Name);
 
-        public InvalidRecord GetInvalidRecord(InvalidRecord obj) => obj;
+        public InvalidRecord? GetInvalidRecord(InvalidRecord obj) => obj;
     }
 
     [ExtendObjectType(OperationTypeNames.Query)]
     public class QueryExtension
     {
-        public InvalidRecord GetInvalidRecordExt([Parent] Query parent, InvalidRecord obj) => parent.GetInvalidRecord(obj);
+        public InvalidRecord? GetInvalidRecordExt([Parent] Query parent, InvalidRecord obj) => parent.GetInvalidRecord(obj);
     }
 
     public class Mutation
@@ -96,7 +96,13 @@ public partial class PipelineExecutionTests
 
         public Sample? SetSample(Sample? obj) => obj;
 
+        public Sample SetSampleHcNullError(Sample obj) => obj;
+
         public SampleRecord? SetSampleRecord(SampleRecord? obj) => obj;
+
+        public FunkyRecord? SetFunkyRecord(FunkyRecord obj) => obj;
+
+        public NoValidationRecord? SetNoValidationRecord(NoValidationRecord obj) => obj;
 
         public SampleRecordWithSynthesizedProperty? SetSampleRecordWithSynthesizedProperty(SampleRecordWithSynthesizedProperty? obj) => obj;
 
@@ -108,31 +114,31 @@ public partial class PipelineExecutionTests
             [AllStringPropertiesMustBeFilled] SampleRecordWithParameterValidationAttribute? obj
         ) => obj;
 
-        public NestedParent SetNestedParent(NestedParent obj) => obj;
+        public NestedParent? SetNestedParent(NestedParent obj) => obj;
     }
 
     [ExtendObjectType(OperationTypeNames.Mutation)]
     public class MutationExtensionByName
     {
-        public NestedParent SetNestedParentExtByName([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+        public NestedParent? SetNestedParentExtByName([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
     }
 
     [ExtendObjectType(OperationType.Mutation)]
     public class MutationExtensionByOperationType
     {
-        public NestedParent SetNestedParentExtByOpType([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+        public NestedParent? SetNestedParentExtByOpType([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
     }
 
     [ExtendObjectType(typeof(Mutation))]
     public class MutationExtensionByType
     {
-        public NestedParent SetNestedParentExtByType([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+        public NestedParent? SetNestedParentExtByType([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
     }
 
     [ExtendObjectType<Mutation>]
     public class MutationExtensionGeneric
     {
-        public NestedParent SetNestedParentExtGeneric([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
+        public NestedParent? SetNestedParentExtGeneric([Parent] Mutation parent, NestedParent obj) => parent.SetNestedParent(obj);
     }
 
     [ExtendObjectType<Sample>]

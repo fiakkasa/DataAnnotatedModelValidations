@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "empty-property-name",
-      "locations": [
-        {
-          "line": 1,
-          "column": 3
-        }
-      ],
       "path": [
         "sample",
         "obj"

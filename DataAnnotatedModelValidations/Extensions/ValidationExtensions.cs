@@ -61,7 +61,7 @@ internal static class ValidationExtensions
         );
 
     private static (bool success, bool? isValueValidation) ValidateItem(
-        this IReadOnlyDictionary<string, object?> context,
+        this ArgumentValidationDefinition? argumentValidationDefinition,
         object item,
         string itemName,
         IServiceProvider serviceProvider,
@@ -70,24 +70,22 @@ internal static class ValidationExtensions
     {
         try
         {
-            _ = context.TryGetValue(Consts.ArgumentValidationContextKey, out var argumentValidationDefinition);
-
             return argumentValidationDefinition switch
             {
                 ArgumentValidationDefinition
-                    {
-                        UseObjectValidator: false,
-                        ParameterAttributes: { Length: > 0 } attributes
-                    } =>
+                {
+                    UseObjectValidator: false,
+                    ParameterAttributes: { Length: > 0 } attributes
+                } =>
                     (
                         success: ValidateAsValue(item, itemName, serviceProvider, validationResults, attributes),
                         isValueValidation: true
                     ),
                 ArgumentValidationDefinition
-                    {
-                        UseObjectValidator: true,
-                        ParameterAttributes: { Length: > 0 } attributes
-                    } =>
+                {
+                    UseObjectValidator: true,
+                    ParameterAttributes: { Length: > 0 } attributes
+                } =>
                     (
                         success: ValidateAsValueAndObject(item, itemName, serviceProvider, validationResults, attributes),
                         isValueValidation: false
@@ -106,10 +104,13 @@ internal static class ValidationExtensions
         }
     }
 
-    private static Action<IInputField> ValidateAndReport(IMiddlewareContext context) =>
+    private static Action<Argument> ValidateAndReport(IMiddlewareContext context) =>
         argument =>
         {
-            if (context.ArgumentValue<object>(argument.Name) is not { } item)
+            if (
+                context.ArgumentValue<object>(argument.Name) is not { } item
+                || !argument.Features.TryGet<ArgumentValidationDefinition>(out var argumentValidationDefinition)
+            )
             {
                 return;
             }
@@ -117,7 +118,7 @@ internal static class ValidationExtensions
             var validationResults = new List<ValidationResult>();
 
             var (success, isValueValidation) =
-                argument.ContextData.ValidateItem(
+                argumentValidationDefinition.ValidateItem(
                     item,
                     argument.Name,
                     context.Services,
@@ -168,18 +169,16 @@ internal static class ValidationExtensions
     internal static void ValidateInputs(this IMiddlewareContext context)
     {
         if (
-            !context.Selection.Field.ContextData.ContainsKey(Consts.FieldValidationContextKey)
-            || context.Selection.Field.Arguments is not { Count: > 0 } arguments
+            !context.Selection.Field.Arguments
+                .Any(arg => arg.Features.TryGet<ArgumentValidationDefinition>(out _))
         )
         {
             return;
         }
 
-        arguments
+        context.Selection.Field.Arguments
             .AsParallel()
-            .Where(argument =>
-                argument?.ContextData.ContainsKey(Consts.ArgumentValidationContextKey) == true
-            )
+            .Where(arg => arg.Features.TryGet<ArgumentValidationDefinition>(out _))
             .ForAll(ValidateAndReport(context));
     }
 }

@@ -20,6 +20,7 @@ In addition, individual method arguments can be validated using annotations from
 
 | HotChocolate Version | DataAnnotatedModelValidations Version | .NET Version  |
 | -------------------- | ------------------------------------- | ------------- |
+| 16.0.0 or higher     | 11.0.0                                | .NET 8, 9, 10 |
 | 15.1.11 or higher    | 10.0.0                                | .NET 8, 9, 10 |
 | 15.0.11 or higher    | 9.0.0                                 | .NET 8, 9, 10 |
 | 15.0.3 or higher     | 8.1.2                                 | .NET 8, 9     |
@@ -42,7 +43,7 @@ In addition, individual method arguments can be validated using annotations from
 | 12.16.0 or higher    | 3.0.1                                      | .NET 7       |
 | 12.4.1 or higher     | 2.1.4                                      | .NET 6       |
 
-📝For more information please visit https://www.nuget.org/packages/DataAnnotatedModelValidations/#versions-body-tab
+📝 For more information please visit https://www.nuget.org/packages/DataAnnotatedModelValidations/#versions-body-tab
 
 ## Usage
 
@@ -205,13 +206,7 @@ The field name will be transformed in the error path as `fieldName,_index_`.
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "path": [
-        "sample",
-        "obj",
-        "children",
-        "_2_",
-        "count"
-      ],
+      "path": ["sample", "obj", "children", "_2_", "count"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
@@ -231,12 +226,7 @@ represented as one entry, `fieldName_index_`.
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "path": [
-        "sample",
-        "obj",
-        "children_2_",
-        "count"
-      ],
+      "path": ["sample", "obj", "children_2_", "count"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
@@ -259,11 +249,7 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
   "errors": [
     {
       "message": "Some validation error!",
-      "path": [
-        "sample",
-        "obj",
-        "hello"
-      ],
+      "path": ["sample", "obj", "hello"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
@@ -273,11 +259,7 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
     },
     {
       "message": "Some validation error!",
-      "path": [
-        "sample",
-        "obj",
-        "world"
-      ],
+      "path": ["sample", "obj", "world"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",

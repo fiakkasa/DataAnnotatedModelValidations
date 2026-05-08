@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "The Name field is required.",
-      "locations": [
-        {
-          "line": 1,
-          "column": 12
-        }
-      ],
       "path": [
         "setSample",
         "obj",
