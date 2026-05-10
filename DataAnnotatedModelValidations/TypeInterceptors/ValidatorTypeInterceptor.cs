@@ -1,6 +1,5 @@
 ﻿using DataAnnotatedModelValidations.Middleware;
 using DataAnnotatedModelValidations.Models;
-using HotChocolate.Language;
 using System.Reflection;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
@@ -19,7 +18,7 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
                 when IsRootOperationType(objectTypeConfiguration) => objectTypeConfiguration.Fields,
             _ => default
         };
-    
+
     private static bool IsRootOperationType(ObjectTypeConfiguration objectTypeDefinition) =>
         IsRootOperationTypeName(objectTypeDefinition.ExtendsType?.Name ?? objectTypeDefinition.Name);
 
@@ -90,7 +89,7 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
             {
                 // add as first middleware to short circuit the pipeline
                 field.MiddlewareConfigurations.Insert(
-                    0, 
+                    0,
                     new FieldMiddlewareConfiguration(ValidatorMiddleware)
                 );
             }

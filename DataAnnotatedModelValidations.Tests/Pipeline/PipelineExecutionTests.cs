@@ -2,6 +2,42 @@
 
 public partial class PipelineExecutionTests
 {
+    [Fact]
+    public async Task Schema_Should_Resolve()
+    {
+        var requestExecutor =
+            await new ServiceCollection()
+                .AddSingleton<MockService>()
+                .AddGraphQLServer()
+                .ModifyPagingOptions(options =>
+                {
+                    options.RequirePagingBoundaries = false;
+                    options.DefaultPageSize = 10;
+                    options.MaxPageSize = 100;
+                })
+                .ModifyCostOptions(options => options.EnforceCostLimits = false)
+                .AddDataAnnotationsValidator()
+                .AddQueryType<Query>()
+                .AddTypeExtension<SampleExtension>()
+                .AddMutationType<Mutation>()
+                .AddTypeExtension<QueryExtension>()
+                .AddTypeExtension<MutationExtensionByName>()
+                .AddTypeExtension<MutationExtensionByOperationType>()
+                .AddTypeExtension<MutationExtensionByType>()
+                .AddTypeExtension<MutationExtensionGeneric>()
+                .AddSorting()
+                .AddFiltering()
+                .AddQueryContext()
+                .BuildRequestExecutorAsync();
+
+        var result = requestExecutor.Schema.ToString();
+
+        Assert.NotNull(result);
+        Assert.Contains("type Query", result);
+        Assert.Contains("type Mutation", result);
+        result.MatchSnapshot();
+    }
+
     [Theory]
     [InlineData(
         """
@@ -275,8 +311,7 @@ public partial class PipelineExecutionTests
                 .AddTypeExtension<MutationExtensionGeneric>()
                 .AddSorting()
                 .AddFiltering()
-                .ExecuteRequestAsync(query)
-                .ConfigureAwait(true);
+                .ExecuteRequestAsync(query);
 
         Assert.Equal(numberOfErrors, result.ExpectOperationResult().Errors?.Count);
         result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
