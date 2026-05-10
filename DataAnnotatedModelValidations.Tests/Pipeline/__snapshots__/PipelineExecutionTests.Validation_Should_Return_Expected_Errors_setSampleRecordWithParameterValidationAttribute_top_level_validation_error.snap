@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "All string fields must be filled.",
-      "locations": [
-        {
-          "line": 1,
-          "column": 12
-        }
-      ],
       "path": [
         "setSampleRecordWithParameterValidationAttribute",
         "obj"

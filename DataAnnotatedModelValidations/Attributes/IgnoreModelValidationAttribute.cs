@@ -1,5 +1,4 @@
 ﻿namespace DataAnnotatedModelValidations.Attributes;
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public class IgnoreModelValidationAttribute : Attribute
-{ }
+public class IgnoreModelValidationAttribute : Attribute;

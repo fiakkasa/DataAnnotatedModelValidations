@@ -1,0 +1,99 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParent",
+        "obj",
+        "child"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParent",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParent",
+        "obj",
+        "children",
+        "_0_",
+        "count"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParent",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParent",
+        "obj",
+        "children",
+        "_2_",
+        "count"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParent",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParent",
+        "obj",
+        "children",
+        "_4_",
+        "count"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParent",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParent",
+        "obj",
+        "children",
+        "_6_",
+        "count"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParent",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    },
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParent",
+        "obj",
+        "count"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParent",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "setNestedParent": null
+  }
+}

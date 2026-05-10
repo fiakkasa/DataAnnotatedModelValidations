@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "locations": [
-        {
-          "line": 2,
-          "column": 5
-        }
-      ],
       "path": [
         "setNestedParentExtByType",
         "obj",
@@ -22,32 +16,6 @@
     },
     {
       "message": "The field Count must be between 1 and 10.",
-      "locations": [
-        {
-          "line": 2,
-          "column": 5
-        }
-      ],
-      "path": [
-        "setNestedParentExtByType",
-        "obj",
-        "count"
-      ],
-      "extensions": {
-        "code": "DAMV-400",
-        "field": "setNestedParentExtByType",
-        "type": "Mutation",
-        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
-      }
-    },
-    {
-      "message": "The field Count must be between 1 and 10.",
-      "locations": [
-        {
-          "line": 2,
-          "column": 5
-        }
-      ],
       "path": [
         "setNestedParentExtByType",
         "obj",
@@ -61,7 +29,23 @@
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
+    },
+    {
+      "message": "The field Count must be between 1 and 10.",
+      "path": [
+        "setNestedParentExtByType",
+        "obj",
+        "count"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "setNestedParentExtByType",
+        "type": "Mutation",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
     }
   ],
-  "data": null
+  "data": {
+    "setNestedParentExtByType": null
+  }
 }

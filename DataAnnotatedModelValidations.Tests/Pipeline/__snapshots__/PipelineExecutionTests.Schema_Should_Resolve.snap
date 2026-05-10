@@ -1,0 +1,316 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  message: String!
+  sampleResponses(
+    skip: Int
+    take: Int
+    percentage: Float!
+    order: [SampleResponseSortInput!] @cost(weight: "10")
+    where: SampleResponseFilterInput @cost(weight: "10")
+  ): SampleResponsesCollectionSegment
+    @listSize(
+      assumedSize: 100
+      slicingArguments: ["take"]
+      slicingArgumentDefaultValue: 10
+      sizedFields: ["items"]
+      requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
+  text(txt: String): String
+  textIgnoreValidation(txt: String): String
+  sample(obj: SampleInput): Sample
+  sampleNonNull(obj: SampleInput!): Sample
+  sampleIgnoreValidation(obj: SampleInput): Sample
+  sampleWithService(obj: SampleInput): Sample
+  invalidRecord(obj: InvalidRecordInput!): InvalidRecord
+  info: String!
+  samples(
+    skip: Int
+    take: Int
+    order: [SampleSortInput!] @cost(weight: "10")
+    where: SampleFilterInput @cost(weight: "10")
+  ): SamplesCollectionSegment
+    @listSize(
+      assumedSize: 100
+      slicingArguments: ["take"]
+      slicingArgumentDefaultValue: 10
+      sizedFields: ["items"]
+      requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
+  invalidRecordExt(obj: InvalidRecordInput!): InvalidRecord
+}
+
+type Mutation {
+  setText(txt: String): String
+  setSample(obj: SampleInput): Sample
+  setSampleHcNullError(obj: SampleInput!): Sample!
+  setSampleRecord(obj: SampleRecordInput): SampleRecord
+  setFunkyRecord(obj: FunkyRecordInput!): FunkyRecord
+  setNoValidationRecord(obj: NoValidationRecordInput!): NoValidationRecord
+  setSampleRecordWithSynthesizedProperty(
+    obj: SampleRecordWithSynthesizedPropertyInput
+  ): SampleRecordWithSynthesizedProperty
+  setSampleRecordWithClassLevelValidationAttribute(
+    obj: SampleRecordWithClassLevelValidationAttributeInput
+  ): SampleRecordWithClassLevelValidationAttribute
+  setSampleRecordWithParameterValidationAttribute(
+    obj: SampleRecordWithParameterValidationAttributeInput
+  ): SampleRecordWithParameterValidationAttribute
+  setNestedParent(obj: NestedParentInput!): NestedParent
+  setNestedParentExtByName(obj: NestedParentInput!): NestedParent
+  setNestedParentExtByOpType(obj: NestedParentInput!): NestedParent
+  setNestedParentExtByType(obj: NestedParentInput!): NestedParent
+  setNestedParentExtGeneric(obj: NestedParentInput!): NestedParent
+}
+
+"Information about the offset pagination."
+type CollectionSegmentInfo {
+  "Indicates whether more items exist following the set defined by the clients arguments."
+  hasNextPage: Boolean!
+  "Indicates whether more items exist prior the set defined by the clients arguments."
+  hasPreviousPage: Boolean!
+}
+
+type FunkyRecord {
+  text: String!
+}
+
+type InvalidRecord {
+  text: String!
+}
+
+type NestedChild {
+  count: Int!
+}
+
+type NestedParent {
+  child: NestedChild!
+  children: [NestedChild!]!
+}
+
+type NoValidationRecord {
+  text: String!
+}
+
+"A segment of a collection."
+type RelatedpCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Sample!]
+}
+
+"A segment of a collection."
+type RelatedpsfCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Sample!]
+}
+
+type Sample {
+  name: String!
+  relatedpsf(
+    skip: Int
+    take: Int
+    order: [SampleSortInput!] @cost(weight: "10")
+    where: SampleFilterInput @cost(weight: "10")
+  ): RelatedpsfCollectionSegment
+    @listSize(
+      assumedSize: 100
+      slicingArguments: ["take"]
+      slicingArgumentDefaultValue: 10
+      sizedFields: ["items"]
+      requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
+  relatedsf(
+    order: [SampleSortInput!] @cost(weight: "10")
+    where: SampleFilterInput @cost(weight: "10")
+  ): [Sample!]! @cost(weight: "10")
+  relatedp(skip: Int, take: Int, where: SampleFilterInput @cost(weight: "10")): RelatedpCollectionSegment
+    @listSize(
+      assumedSize: 100
+      slicingArguments: ["take"]
+      slicingArgumentDefaultValue: 10
+      sizedFields: ["items"]
+      requireOneSlicingArgument: false
+    )
+    @cost(weight: "10")
+}
+
+type SampleRecord {
+  name: String!
+}
+
+type SampleRecordWithClassLevelValidationAttribute {
+  name: String
+  info: String
+}
+
+type SampleRecordWithParameterValidationAttribute {
+  name: String!
+  info: String!
+}
+
+type SampleRecordWithSynthesizedProperty {
+  name: String!
+}
+
+type SampleResponse {
+  name: String!
+  info: String
+  numberOfPets: Int!
+  age: Int
+}
+
+"A segment of a collection."
+type SampleResponsesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [SampleResponse!]
+}
+
+"A segment of a collection."
+type SamplesCollectionSegment {
+  "Information to aid in pagination."
+  pageInfo: CollectionSegmentInfo!
+  "A flattened list of the items."
+  items: [Sample!]
+}
+
+input FunkyRecordInput {
+  text: String!
+}
+
+input IntOperationFilterInput {
+  eq: Int @cost(weight: "10")
+  neq: Int @cost(weight: "10")
+  in: [Int] @cost(weight: "10")
+  nin: [Int] @cost(weight: "10")
+  gt: Int @cost(weight: "10")
+  ngt: Int @cost(weight: "10")
+  gte: Int @cost(weight: "10")
+  ngte: Int @cost(weight: "10")
+  lt: Int @cost(weight: "10")
+  nlt: Int @cost(weight: "10")
+  lte: Int @cost(weight: "10")
+  nlte: Int @cost(weight: "10")
+}
+
+input InvalidRecordInput {
+  text: String!
+}
+
+input NestedChildInput {
+  count: Int!
+}
+
+input NestedParentInput {
+  child: NestedChildInput!
+  children: [NestedChildInput!]!
+}
+
+input NoValidationRecordInput {
+  text: String!
+}
+
+input SampleFilterInput {
+  and: [SampleFilterInput!]
+  or: [SampleFilterInput!]
+  name: StringOperationFilterInput
+}
+
+input SampleInput {
+  name: String!
+}
+
+input SampleRecordInput {
+  name: String!
+}
+
+input SampleRecordWithClassLevelValidationAttributeInput {
+  name: String
+  info: String
+}
+
+input SampleRecordWithParameterValidationAttributeInput {
+  name: String!
+  info: String!
+}
+
+input SampleRecordWithSynthesizedPropertyInput {
+  name: String!
+}
+
+input SampleResponseFilterInput {
+  and: [SampleResponseFilterInput!]
+  or: [SampleResponseFilterInput!]
+  name: StringOperationFilterInput
+  info: StringOperationFilterInput
+  numberOfPets: IntOperationFilterInput
+  age: IntOperationFilterInput
+}
+
+input SampleResponseSortInput {
+  name: SortEnumType @cost(weight: "10")
+  info: SortEnumType @cost(weight: "10")
+  numberOfPets: SortEnumType @cost(weight: "10")
+  age: SortEnumType @cost(weight: "10")
+}
+
+input SampleSortInput {
+  name: SortEnumType @cost(weight: "10")
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String @cost(weight: "10")
+  neq: String @cost(weight: "10")
+  contains: String @cost(weight: "20")
+  ncontains: String @cost(weight: "20")
+  in: [String] @cost(weight: "10")
+  nin: [String] @cost(weight: "10")
+  startsWith: String @cost(weight: "20")
+  nstartsWith: String @cost(weight: "20")
+  endsWith: String @cost(weight: "20")
+  nendsWith: String @cost(weight: "20")
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response."
+directive @cost(
+  "The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc."
+  weight: String!
+) on
+  | SCALAR
+  | OBJECT
+  | FIELD_DEFINITION
+  | ARGUMENT_DEFINITION
+  | ENUM
+  | INPUT_FIELD_DEFINITION
+
+"The purpose of the `@listSize` directive is to either inform the static analysis about the size of returned lists (if that information is statically available), or to point the analysis to where to find that information."
+directive @listSize(
+  "The `assumedSize` argument can be used to statically define the maximum length of a list returned by a field."
+  assumedSize: Int
+  "The `slicingArguments` argument can be used to define which of the field's arguments with numeric type are slicing arguments, so that their value determines the size of the list returned by that field. It may specify a list of multiple slicing arguments."
+  slicingArguments: [String!]
+  "The `slicingArgumentDefaultValue` argument can be used to define a default value for a slicing argument, which is used if the argument is not present in a query."
+  slicingArgumentDefaultValue: Int
+  "The `sizedFields` argument can be used to define that the value of the `assumedSize` argument or of a slicing argument does not affect the size of a list returned by a field itself, but that of a list returned by one of its sub-fields."
+  sizedFields: [String!]
+  "The `requireOneSlicingArgument` argument can be used to inform the static analysis that it should expect that exactly one of the defined slicing arguments is present in a query. If that is not the case (i.e., if none or multiple slicing arguments are present), the static analysis may throw an error."
+  requireOneSlicingArgument: Boolean = true
+) on FIELD_DEFINITION

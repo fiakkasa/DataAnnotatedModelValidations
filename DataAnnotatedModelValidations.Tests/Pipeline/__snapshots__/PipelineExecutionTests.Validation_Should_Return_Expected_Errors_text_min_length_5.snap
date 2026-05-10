@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "The field txt must be a string with a minimum length of 5 and a maximum length of 100.",
-      "locations": [
-        {
-          "line": 1,
-          "column": 3
-        }
-      ],
       "path": [
         "text",
         "txt"

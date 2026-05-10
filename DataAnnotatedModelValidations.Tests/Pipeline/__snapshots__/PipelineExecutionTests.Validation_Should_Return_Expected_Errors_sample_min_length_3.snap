@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "The field Name must be a string with a minimum length of 3 and a maximum length of 100.",
-      "locations": [
-        {
-          "line": 1,
-          "column": 3
-        }
-      ],
       "path": [
         "sample",
         "obj",

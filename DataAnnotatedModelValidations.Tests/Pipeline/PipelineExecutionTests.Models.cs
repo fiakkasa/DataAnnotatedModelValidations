@@ -102,6 +102,22 @@ public partial class PipelineExecutionTests
         }
     }
 
+    public record FunkyRecord : IValidatableObject
+    {
+        public string Text { get; init; } = string.Empty;
+
+        [GraphQLIgnore]
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            yield break;
+        }
+    }
+
+    public record NoValidationRecord
+    {
+        public string Text { get; init; } = string.Empty;
+    }
+
     public record SampleResponse
     {
         public string Name { get; init; } = string.Empty;

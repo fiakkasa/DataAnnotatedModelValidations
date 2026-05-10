@@ -2,12 +2,6 @@
   "errors": [
     {
       "message": "The field of type HotChocolate.Optional`1[System.String] must be a string, array or ICollection type for validation attribute MaxLengthAttribute.",
-      "locations": [
-        {
-          "line": 1,
-          "column": 3
-        }
-      ],
       "path": [
         "invalidRecordExt",
         "obj"
@@ -20,5 +14,7 @@
       }
     }
   ],
-  "data": null
+  "data": {
+    "invalidRecordExt": null
+  }
 }

@@ -1,21 +1,28 @@
 ﻿{
   "errors": [
     {
+      "message": "Cannot return null for non-nullable field.",
+      "path": [
+        "setSampleHcNullError"
+      ],
+      "extensions": {
+        "code": "HC0018"
+      }
+    },
+    {
       "message": "The Name field is required.",
       "path": [
-        "setSampleRecord",
+        "setSampleHcNullError",
         "obj",
         "name"
       ],
       "extensions": {
         "code": "DAMV-400",
-        "field": "setSampleRecord",
+        "field": "setSampleHcNullError",
         "type": "Mutation",
         "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
       }
     }
   ],
-  "data": {
-    "setSampleRecord": null
-  }
+  "data": null
 }
