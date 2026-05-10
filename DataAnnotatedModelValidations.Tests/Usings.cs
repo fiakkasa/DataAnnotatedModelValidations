@@ -1,11 +1,9 @@
 global using GreenDonut.Data;
 global using HotChocolate.Data;
 global using HotChocolate.Execution;
-global using HotChocolate.Resolvers;
 global using HotChocolate.Types;
 global using HotChocolate;
 global using Microsoft.Extensions.DependencyInjection;
-global using NSubstitute;
 global using Snapshooter.Xunit;
 global using Snapshooter;
 global using System.Collections.Generic;
