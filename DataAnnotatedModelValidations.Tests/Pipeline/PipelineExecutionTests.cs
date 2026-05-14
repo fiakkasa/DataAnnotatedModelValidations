@@ -144,6 +144,7 @@ public partial class PipelineExecutionTests
     [InlineData("""{ textIgnoreValidation(txt: "a") }""", 0, "textIgnoreValidation_no_errors")]
     [InlineData("""mutation { setText(txt: "abc") }""", 1, "setText_min_length_5")]
     [InlineData("""mutation { setSample(obj: { name: "" }) { name } }""", 1, "setSample_blank_name_required")]
+    [InlineData("""mutation { setSampleIgnoreValidation(obj: { name: "" }) { name } }""", 0, "setSampleIgnoreValidation_no_errors")]
     [InlineData("""mutation { setSampleHcNullError(obj: { name: "" }) { name } }""", 2, "setSample_hc_null_error_blank_name_required")]
     [InlineData("""mutation { setSampleRecord(obj: { name: "" }) { name } }""", 1, "setSampleRecord_blank_name_required")]
     [InlineData("""mutation { setFunkyRecord(obj: { text: "" }) { text } }""", 0, "setFunkyRecord_no_errors")]

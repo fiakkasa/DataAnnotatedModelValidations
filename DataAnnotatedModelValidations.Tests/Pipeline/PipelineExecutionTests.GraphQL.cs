@@ -96,6 +96,8 @@ public partial class PipelineExecutionTests
 
         public Sample? SetSample(Sample? obj) => obj;
 
+        public Sample? SetSampleIgnoreValidation([IgnoreModelValidation] Sample? obj) => obj;
+
         public Sample SetSampleHcNullError(Sample obj) => obj;
 
         public SampleRecord? SetSampleRecord(SampleRecord? obj) => obj;

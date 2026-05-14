@@ -48,6 +48,7 @@ type Query {
 type Mutation {
   setText(txt: String): String
   setSample(obj: SampleInput): Sample
+  setSampleIgnoreValidation(obj: SampleInput): Sample
   setSampleHcNullError(obj: SampleInput!): Sample!
   setSampleRecord(obj: SampleRecordInput): SampleRecord
   setFunkyRecord(obj: FunkyRecordInput!): FunkyRecord
