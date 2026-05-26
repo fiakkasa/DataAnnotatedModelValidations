@@ -1,0 +1,26 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field txt must be a string with a minimum length of 5 and a maximum length of 100.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 3
+        }
+      ],
+      "path": [
+        "text",
+        "txt"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "text",
+        "type": "Query",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": {
+    "text": null
+  }
+}

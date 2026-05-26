@@ -1,0 +1,12 @@
+﻿{
+  "data": {
+    "setNestedParent": {
+      "child": {
+        "count": 5,
+        "specialCount": [
+          "take: 22"
+        ]
+      }
+    }
+  }
+}

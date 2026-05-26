@@ -16,18 +16,19 @@ In addition, individual method arguments can be validated using annotations from
 
 | HotChocolate Version | DataAnnotatedModelValidations Version | .NET Version  |
 | -------------------- | ------------------------------------- | ------------- |
+| 15.1.16 or higher    | 10.0.1                                | .NET 8, 9, 10 |
 | 15.1.11 or higher    | 10.0.0                                | .NET 8, 9, 10 |
-| 15.1.11 or higher    |  9.0.0                                | .NET 8, 9, 10 |
-| 15.0.3 or higher     |  8.1.2                                | .NET 8, 9     |
-| 15.0.3 or higher     |  8.1.1                                | .NET 8, 9     |
-| 15.0.3 or higher     |  8.1.0                                | .NET 8, 9     |
-| 15.0.3 or higher     |  8.0.1                                | .NET 8, 9     |
-| 15.0.3 or higher     |  8.0.0                                | .NET 8, 9     |
-| 15.0.3 or higher     |  7.0.0                                | .NET 8, 9     |
-| 14.3.0 or higher     |  6.3.0                                | .NET 8, 9     |
-| 14.2.0 or higher     |  6.2.0                                | .NET 8, 9     |
-| 14.1.0 or higher     |  6.1.0                                | .NET 8, 9     |
-| 14.0.0 or higher     |  6.0.0                                | .NET 8        |
+| 15.1.11 or higher    | 9.0.0                                 | .NET 8, 9, 10 |
+| 15.0.3 or higher     | 8.1.2                                 | .NET 8, 9     |
+| 15.0.3 or higher     | 8.1.1                                 | .NET 8, 9     |
+| 15.0.3 or higher     | 8.1.0                                 | .NET 8, 9     |
+| 15.0.3 or higher     | 8.0.1                                 | .NET 8, 9     |
+| 15.0.3 or higher     | 8.0.0                                 | .NET 8, 9     |
+| 15.0.3 or higher     | 7.0.0                                 | .NET 8, 9     |
+| 14.3.0 or higher     | 6.3.0                                 | .NET 8, 9     |
+| 14.2.0 or higher     | 6.2.0                                 | .NET 8, 9     |
+| 14.1.0 or higher     | 6.1.0                                 | .NET 8, 9     |
+| 14.0.0 or higher     | 6.0.0                                 | .NET 8        |
 
 ### Past Releases
 
@@ -56,6 +57,82 @@ public void ConfigureServices(IServiceCollection services)
         .AddDataAnnotationsValidator()
         .AddQueryType<Query>();
     // ...
+}
+```
+
+### Options
+
+Optionally you can set the flag `restrictToRootTypes` to `true` (default) or `false` ex. `.AddDataAnnotationsValidator(restrictToRootTypes: false)`;
+
+When restrictToRootTypes is set to false it will enable validation on nested resolvers.
+
+ex.
+
+```csharp
+public class DemoQuery
+{
+    public SampleWithNestedResolver GetItem() => new();
+}
+
+public record SampleWithNestedResolver
+{
+    public string GetEmail(SampleWithNestedResolverValidatedInput input) => input.Email;
+}
+
+public record SampleWithNestedResolverValidatedInput
+{
+    [StringLength(100, MinimumLength = 5)]
+    public string Email { get; set; } = string.Empty;
+}
+```
+
+```graphql
+{
+  item {
+    email(input: { email: "abc" })
+  }
+}
+```
+
+#### restrictToRootTypes: false
+
+> The email property should be validated in this case
+
+```json
+{
+  "errors": [
+    {
+      "message": "The field Email must be a string with a minimum length of 5 and a maximum length of 100.",
+      "locations": [
+        {
+          "line": 3,
+          "column": 9
+        }
+      ],
+      "path": ["item", "email", "input", "email"],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "email",
+        "type": "SampleWithNestedResolver",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": null
+}
+```
+
+#### restrictToRootTypes: true
+
+> The email property should be not be validated in this case
+
+```json
+{
+  "data": {
+    "item": {
+      "email": "abc"
+    }
+  }
 }
 ```
 
@@ -201,13 +278,7 @@ The field name will be transformed in the error path as `fieldName,_index_`.
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "path": [
-        "sample",
-        "obj",
-        "children",
-        "_2_",
-        "count"
-      ],
+      "path": ["sample", "obj", "children", "_2_", "count"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
@@ -227,12 +298,7 @@ represented as one entry, `fieldName_index_`.
   "errors": [
     {
       "message": "The field Count must be between 1 and 10.",
-      "path": [
-        "sample",
-        "obj",
-        "children_2_",
-        "count"
-      ],
+      "path": ["sample", "obj", "children_2_", "count"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
@@ -255,11 +321,7 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
   "errors": [
     {
       "message": "Some validation error!",
-      "path": [
-        "sample",
-        "obj",
-        "hello"
-      ],
+      "path": ["sample", "obj", "hello"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",
@@ -269,11 +331,7 @@ Ex. validation error '"Some validation error!"' was assigned to properties hello
     },
     {
       "message": "Some validation error!",
-      "path": [
-        "sample",
-        "obj",
-        "world"
-      ],
+      "path": ["sample", "obj", "world"],
       "extensions": {
         "code": "DAMV-400",
         "field": "sample",

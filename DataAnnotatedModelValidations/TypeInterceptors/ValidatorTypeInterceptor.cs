@@ -4,18 +4,19 @@ using System.Reflection;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
 
-public sealed class ValidatorTypeInterceptor : TypeInterceptor
+public sealed class ValidatorTypeInterceptor(bool restrictToRootTypes = true) : TypeInterceptor
 {
     private FieldMiddleware? _validatorMiddleware;
 
     private FieldMiddleware ValidatorMiddleware =>
         _validatorMiddleware ??= FieldClassMiddlewareFactory.Create<ValidatorMiddleware>();
 
-    private static IBindableList<ObjectFieldDefinition>? ObjectTypeDefinitionFields(DefinitionBase? definition) =>
-        definition switch
+    private IBindableList<ObjectFieldDefinition>? GetFields(DefinitionBase? definition) =>
+        (restrictToRootTypes, definition) switch
         {
-            ObjectTypeDefinition { Fields.Count: > 0 } objectTypeDefinition
-                when IsRootOperationType(objectTypeDefinition) => objectTypeDefinition.Fields,
+            (true, ObjectTypeDefinition { Fields: { Count: > 0 } fields } def)
+                when IsRootOperationType(def) => fields,
+            (false, ObjectTypeDefinition { Fields: { Count: > 0 } fields }) => fields,
             _ => default
         };
 
@@ -50,7 +51,7 @@ public sealed class ValidatorTypeInterceptor : TypeInterceptor
 
     public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, DefinitionBase definition)
     {
-        if (ObjectTypeDefinitionFields(definition) is not { } fields)
+        if (GetFields(definition) is not { } fields)
         {
             return;
         }

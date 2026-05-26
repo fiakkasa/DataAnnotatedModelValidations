@@ -82,6 +82,12 @@ public partial class PipelineExecutionTests
             service.Get(obj?.Name);
 
         public InvalidRecord GetInvalidRecord(InvalidRecord obj) => obj;
+
+        public NestedParent GetNestedParent() => new()
+        {
+            Child = new(),
+            Children = [new()]
+        };
     }
 
     [ExtendObjectType(OperationTypeNames.Query)]

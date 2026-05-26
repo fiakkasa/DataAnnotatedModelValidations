@@ -1,0 +1,65 @@
+﻿{
+  "data": {
+    "samples": {
+      "items": [
+        {
+          "psf1": {
+            "items": [
+              {
+                "name": "Jane"
+              }
+            ]
+          },
+          "psf2": {
+            "items": []
+          },
+          "psf3": {
+            "items": [
+              {
+                "name": "Bob"
+              }
+            ]
+          },
+          "psf4": {
+            "items": [
+              {
+                "name": "Bob"
+              },
+              {
+                "name": "Jane"
+              }
+            ]
+          },
+          "psf5": {
+            "items": [
+              {
+                "name": "Jane"
+              },
+              {
+                "name": "Bob"
+              }
+            ]
+          },
+          "relatedsf": [
+            {
+              "name": "Jane"
+            },
+            {
+              "name": "Bob"
+            }
+          ],
+          "relatedp": {
+            "items": [
+              {
+                "name": "Jane"
+              },
+              {
+                "name": "Bob"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field Take must be between 1 and 10.",
+      "locations": [
+        {
+          "line": 8,
+          "column": 13
+        }
+      ],
+      "path": [
+        "setNestedParent",
+        "child",
+        "specialCount",
+        "input",
+        "take"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "specialCount",
+        "type": "NestedChild",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": null
+}

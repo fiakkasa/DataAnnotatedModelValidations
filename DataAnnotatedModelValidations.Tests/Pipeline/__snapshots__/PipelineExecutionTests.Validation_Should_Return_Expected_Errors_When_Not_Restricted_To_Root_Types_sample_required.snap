@@ -1,0 +1,20 @@
+﻿{
+  "errors": [
+    {
+      "message": "`name` is a required field and cannot be null.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 17
+        }
+      ],
+      "path": [
+        "sample"
+      ],
+      "extensions": {
+        "field": "name",
+        "specifiedBy": "https://spec.graphql.org/October2021/#sec-Input-Object-Required-Fields"
+      }
+    }
+  ]
+}

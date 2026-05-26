@@ -1,0 +1,25 @@
+﻿{
+  "errors": [
+    {
+      "message": "The field Name must be a string with a minimum length of 3 and a maximum length of 100.",
+      "locations": [
+        {
+          "line": 1,
+          "column": 3
+        }
+      ],
+      "path": [
+        "sampleNonNull",
+        "obj",
+        "name"
+      ],
+      "extensions": {
+        "code": "DAMV-400",
+        "field": "sampleNonNull",
+        "type": "Query",
+        "specifiedBy": "https://spec.graphql.org/June2018/#sec-Values-of-Correct-Type"
+      }
+    }
+  ],
+  "data": null
+}

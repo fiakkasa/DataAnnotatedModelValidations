@@ -1,0 +1,38 @@
+﻿{
+  "data": {
+    "sampleResponses": {
+      "items": [
+        {
+          "name": "",
+          "info": "unknown_user",
+          "numberOfPets": 0,
+          "age": null
+        },
+        {
+          "name": "Alice Johnson",
+          "info": null,
+          "numberOfPets": 0,
+          "age": null
+        },
+        {
+          "name": "Bob Smith",
+          "info": "bob_smith",
+          "numberOfPets": 0,
+          "age": null
+        },
+        {
+          "name": "Jane Doe",
+          "info": null,
+          "numberOfPets": 1,
+          "age": 25
+        },
+        {
+          "name": "John Doe",
+          "info": "john_doe",
+          "numberOfPets": 2,
+          "age": 30
+        }
+      ]
+    }
+  }
+}

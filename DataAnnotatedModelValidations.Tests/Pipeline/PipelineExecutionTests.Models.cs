@@ -54,7 +54,11 @@ public partial class PipelineExecutionTests
     {
         [Range(1, 10)]
         public int Count { get; set; }
+
+        public string[] GetSpecialCount(NestedChildCountInput input) => [$"take: {input.Take}"];
     }
+
+    public record NestedChildCountInput([property: Range(1, 10)] int Take);
 
     public record NestedParent : IValidatableObject
     {

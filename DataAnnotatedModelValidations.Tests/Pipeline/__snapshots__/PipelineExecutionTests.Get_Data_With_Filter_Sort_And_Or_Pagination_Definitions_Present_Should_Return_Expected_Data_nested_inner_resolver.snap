@@ -1,0 +1,20 @@
+﻿{
+  "data": {
+    "nestedParent": {
+      "child": {
+        "count": 0,
+        "specialCount": [
+          "take: 22"
+        ]
+      },
+      "children": [
+        {
+          "count": 0,
+          "specialCount": [
+            "take: 33"
+          ]
+        }
+      ]
+    }
+  }
+}
