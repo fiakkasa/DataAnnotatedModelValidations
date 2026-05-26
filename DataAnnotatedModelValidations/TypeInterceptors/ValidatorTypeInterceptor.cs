@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace DataAnnotatedModelValidations.TypeInterceptors;
 
-public sealed class ValidatorTypeInterceptor(bool restrictToRootTypes = true) : TypeInterceptor
+public sealed class ValidatorTypeInterceptor(bool bindUsingRootTypeFields = true) : TypeInterceptor
 {
     private FieldMiddleware? _validatorMiddleware;
 
@@ -12,7 +12,7 @@ public sealed class ValidatorTypeInterceptor(bool restrictToRootTypes = true) : 
         _validatorMiddleware ??= FieldClassMiddlewareFactory.Create<ValidatorMiddleware>();
 
     private IBindableList<ObjectFieldDefinition>? GetFields(DefinitionBase? definition) =>
-        (restrictToRootTypes, definition) switch
+        (bindUsingRootTypeFields, definition) switch
         {
             (true, ObjectTypeDefinition { Fields: { Count: > 0 } fields } def)
                 when IsRootOperationType(def) => fields,

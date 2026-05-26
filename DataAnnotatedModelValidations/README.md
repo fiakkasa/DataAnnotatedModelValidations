@@ -62,9 +62,9 @@ public void ConfigureServices(IServiceCollection services)
 
 ### Options
 
-Optionally you can set the flag `restrictToRootTypes` to `true` (default) or `false` ex. `.AddDataAnnotationsValidator(restrictToRootTypes: false)`;
+Optionally you can set the flag `bindUsingRootTypeFields` to `true` (default) or `false` ex. `.AddDataAnnotationsValidator(bindUsingRootTypeFields: false)`;
 
-When restrictToRootTypes is set to false it will enable validation on nested resolvers.
+When bindUsingRootTypeFields is set to false it will enable validation on nested resolvers.
 
 ex.
 
@@ -94,7 +94,7 @@ public record SampleWithNestedResolverValidatedInput
 }
 ```
 
-#### restrictToRootTypes: false
+#### bindUsingRootTypeFields: false
 
 > The email property should be validated in this case
 
@@ -122,7 +122,7 @@ public record SampleWithNestedResolverValidatedInput
 }
 ```
 
-#### restrictToRootTypes: true
+#### bindUsingRootTypeFields: true
 
 > The email property should be not be validated in this case
 

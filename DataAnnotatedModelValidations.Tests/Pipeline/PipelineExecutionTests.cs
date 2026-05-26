@@ -2,7 +2,7 @@
 
 public partial class PipelineExecutionTests
 {
-    public async Task<IExecutionResult> ExecuteQueryWithFilterSortPaginationDefinitions(string query, bool restrictToRootTypes) =>
+    public async Task<IExecutionResult> ExecuteQueryWithFilterSortPaginationDefinitions(string query, bool bindUsingRootTypeFields) =>
         await new ServiceCollection()
             .AddSingleton<MockService>()
             .AddGraphQLServer()
@@ -13,7 +13,7 @@ public partial class PipelineExecutionTests
                 options.MaxPageSize = 100;
             })
             .ModifyCostOptions(options => options.EnforceCostLimits = false)
-            .AddDataAnnotationsValidator(restrictToRootTypes)
+            .AddDataAnnotationsValidator(bindUsingRootTypeFields)
             .AddQueryType<Query>()
             .AddTypeExtension<SampleExtension>()
             .AddSorting()
@@ -180,11 +180,11 @@ public partial class PipelineExecutionTests
         result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
 
-    private static async Task<IExecutionResult> ExecuteValidationQuery(bool restrictToRootTypes, string query) =>
+    private static async Task<IExecutionResult> ExecuteValidationQuery(bool bindUsingRootTypeFields, string query) =>
         await new ServiceCollection()
             .AddSingleton<MockService>()
             .AddGraphQLServer()
-            .AddDataAnnotationsValidator(restrictToRootTypes)
+            .AddDataAnnotationsValidator(bindUsingRootTypeFields)
             .AddQueryType<Query>()
             .AddMutationType<Mutation>()
             .AddTypeExtension<QueryExtension>()

@@ -6,9 +6,9 @@ public static class DataAnnotationsValidatorRegistration
 {
     public static IRequestExecutorBuilder AddDataAnnotationsValidator(
         this IRequestExecutorBuilder requestExecutorBuilder,
-        bool restrictToRootTypes = true
+        bool bindUsingRootTypeFields = true
     ) =>
         requestExecutorBuilder.TryAddTypeInterceptor(
-            new ValidatorTypeInterceptor(restrictToRootTypes)
+            new ValidatorTypeInterceptor(bindUsingRootTypeFields)
         );
 }
