@@ -9,8 +9,8 @@ type Query {
     skip: Int
     take: Int
     percentage: Float!
-    order: [SampleResponseSortInput!] @cost(weight: "10")
     where: SampleResponseFilterInput @cost(weight: "10")
+    order: [SampleResponseSortInput!] @cost(weight: "10")
   ): SampleResponsesCollectionSegment
     @listSize(
       assumedSize: 100

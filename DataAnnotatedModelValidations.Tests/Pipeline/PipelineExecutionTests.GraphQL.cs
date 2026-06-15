@@ -23,8 +23,8 @@ public partial class PipelineExecutionTests
         public string GetMessage() => "Message";
 
         [UseOffsetPaging]
-        [UseSorting]
         [UseFiltering]
+        [UseSorting]
         public async Task<List<SampleResponse>> GetSampleResponses(
             [Range(0, 100)] double percentage,
             QueryContext<SampleResponse> queryContext,
@@ -195,4 +195,14 @@ public partial class PipelineExecutionTests
             }
         }.AsQueryable();
     }
+
+}
+
+/// <summary>
+/// Sample query methods that get registered via source generation.
+/// </summary>
+[QueryType]
+public static partial class SourceGeneratorQuery
+{
+    public static string? GetTextSourceGenerator([StringLength(5, MinimumLength = 3)] string? txt) => txt;
 }

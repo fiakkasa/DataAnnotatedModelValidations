@@ -636,4 +636,23 @@ public partial class PipelineExecutionTests
         Assert.Equal(numberOfErrors, result.ExpectOperationResult().Errors?.Count);
         result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
     }
+
+    [Theory]
+    [InlineData("""{ textSourceGenerator(txt: "a") }""", 1, "text_source_gen__min_length_3")]
+    [InlineData("""{ textSourceGenerator(txt: "abcdefg") }""", 1, "text_source_gen__max_length_5")]
+    public async Task Validation_Should_Return_Expected_Errors_From_Source_Generated_Fields(string query, int numberOfErrors, string description)
+    {
+        var result = await new ServiceCollection()
+            .AddGraphQLServer()
+            .AddSorting()
+            .AddFiltering()
+            .AddQueryContext()
+            .AddTestsTypes()
+            .AddDataAnnotationsValidator()
+            .ExecuteRequestAsync(query);
+
+
+        Assert.Equal(numberOfErrors, result.ExpectOperationResult().Errors?.Count);
+        //result.ExpectOperationResult().ToJson().MatchSnapshot(new SnapshotNameExtension($"{description}.snap"));
+    }
 }
