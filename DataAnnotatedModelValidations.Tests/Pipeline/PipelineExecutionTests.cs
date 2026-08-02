@@ -28,7 +28,7 @@ public partial class PipelineExecutionTests
                 .AddSorting()
                 .AddFiltering()
                 .AddQueryContext()
-                .BuildRequestExecutorAsync();
+                .BuildRequestExecutorAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         var result = requestExecutor.Schema.ToString();
 
@@ -55,7 +55,7 @@ public partial class PipelineExecutionTests
             .AddSorting()
             .AddFiltering()
             .AddQueryContext()
-            .ExecuteRequestAsync(query);
+            .ExecuteRequestAsync(query, cancellationToken: TestContext.Current.CancellationToken);
 
     [Theory]
     [InlineData(
@@ -230,7 +230,7 @@ public partial class PipelineExecutionTests
             .AddTypeExtension<MutationExtensionGeneric>()
             .AddSorting()
             .AddFiltering()
-            .ExecuteRequestAsync(query);
+            .ExecuteRequestAsync(query, cancellationToken: TestContext.Current.CancellationToken);
 
     [Theory]
     [InlineData("""{ info }""", 0, "info")]

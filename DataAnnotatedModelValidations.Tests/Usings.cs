@@ -4,7 +4,7 @@ global using HotChocolate.Execution;
 global using HotChocolate.Types;
 global using HotChocolate;
 global using Microsoft.Extensions.DependencyInjection;
-global using Snapshooter.Xunit;
+global using Snapshooter.Xunit3;
 global using Snapshooter;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
