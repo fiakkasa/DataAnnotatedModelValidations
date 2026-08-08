@@ -20,10 +20,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HotChocolate" Version="16.0.9" />
-    <PackageReference Include="HotChocolate.AspNetCore" Version="16.0.9" />
-    <PackageReference Include="HotChocolate.Data" Version="16.0.9" />
-    <PackageReference Include="HotChocolate.Types.OffsetPagination" Version="16.0.9" />
+    <PackageReference Include="HotChocolate" Version="16.6.0" />
+    <PackageReference Include="HotChocolate.AspNetCore" Version="16.6.0" />
+    <PackageReference Include="HotChocolate.Data" Version="16.6.0" />
+    <PackageReference Include="HotChocolate.Types.OffsetPagination" Version="16.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageReference Include="NSubstitute" Version="6.0.0" />
     <PackageReference Include="Snapshooter.Xunit3" Version="1.3.1" />
