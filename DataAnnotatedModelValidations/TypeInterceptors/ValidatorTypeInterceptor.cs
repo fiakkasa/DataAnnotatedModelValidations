@@ -11,12 +11,11 @@ public sealed class ValidatorTypeInterceptor(bool bindUsingRootTypeFields = true
     private FieldMiddleware ValidatorMiddleware =>
         _validatorMiddleware ??= FieldClassMiddlewareFactory.Create<ValidatorMiddleware>();
 
-    private IBindableList<ObjectFieldConfiguration>? GetFields(TypeSystemConfiguration? configuration) =>
-        (bindUsingRootTypeFields, configuration) switch
+    private static IBindableList<ObjectFieldConfiguration>? GetFields(bool useRootFields, TypeSystemConfiguration? configuration) =>
+        configuration switch
         {
-            (true, ObjectTypeConfiguration { Fields: { Count: > 0 } fields } def)
-                when IsRootOperationType(def) => fields,
-            (false, ObjectTypeConfiguration { Fields: { Count: > 0 } fields }) => fields,
+            ObjectTypeConfiguration { Fields: { Count: > 0 } fields } def
+                when !useRootFields || IsRootOperationType(def) => fields,
             _ => default
         };
 
@@ -51,49 +50,53 @@ public sealed class ValidatorTypeInterceptor(bool bindUsingRootTypeFields = true
 
     public override void OnAfterInitialize(ITypeDiscoveryContext discoveryContext, TypeSystemConfiguration configuration)
     {
-        if (GetFields(configuration) is not { } fields)
+        if (GetFields(bindUsingRootTypeFields, configuration) is not { } fields)
         {
             return;
         }
 
         foreach (var field in fields)
         {
-            var isValidatable = false;
-
-            foreach (var argument in field.Arguments)
+            if (SetArgumentValidationDefinitionToEligibleArguments(field) == 0)
             {
-                if (
-                    argument is not { Parameter: { } parameter }
-                    || parameter.IsDefined(Consts.IgnoreValidationAttributeType, true)
-                    || parameter.ParameterType.IsDefined(Consts.IgnoreValidationAttributeType, true)
-                )
-                {
-                    continue;
-                }
-
-                var customParameterAttributes = GetValidationAttributes(parameter);
-                var shouldUseObjectValidator = ShouldUseObjectValidator(parameter);
-
-                if (customParameterAttributes.Length > 0 || shouldUseObjectValidator)
-                {
-                    argument.Features.Set(
-                        new ArgumentValidationDefinition(
-                            shouldUseObjectValidator,
-                            customParameterAttributes
-                        )
-                    );
-                    isValidatable = true;
-                }
+                continue;
             }
 
-            if (isValidatable)
+            // add as first middleware to short circuit the pipeline
+            field.MiddlewareConfigurations.Insert(
+                0,
+                new FieldMiddlewareConfiguration(ValidatorMiddleware)
+            );
+        }
+    }
+
+    private static long SetArgumentValidationDefinitionToEligibleArguments(ObjectFieldConfiguration field)
+    {
+        var count = 0L;
+
+        foreach (var argument in field.Arguments)
+        {
+            if (
+                argument is not { Parameter: { } parameter }
+                || parameter.IsDefined(Consts.IgnoreValidationAttributeType, true)
+                || parameter.ParameterType.IsDefined(Consts.IgnoreValidationAttributeType, true)
+            )
             {
-                // add as first middleware to short circuit the pipeline
-                field.MiddlewareConfigurations.Insert(
-                    0,
-                    new FieldMiddlewareConfiguration(ValidatorMiddleware)
-                );
+                continue;
+            }
+
+            var validationAttributes = GetValidationAttributes(parameter);
+            var useObjectValidator = ShouldUseObjectValidator(parameter);
+
+            if (validationAttributes.Length > 0 || useObjectValidator)
+            {
+                argument.Features.Set(
+                   new ArgumentValidationDefinition(useObjectValidator, validationAttributes)
+               );
+                count++;
             }
         }
+
+        return count;
     }
 }
