@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageId>$(MSBuildProjectName)</PackageId>
-    <Version>11.2.0</Version>
+    <Version>12.0.0</Version>
     <Authors>Adamos Fiakkas</Authors>
     <Description>Data Annotated Model Validation Middleware for HotChocolate</Description>
     <Copyright>Adamos Fiakkas</Copyright>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HotChocolate.Types" Version="16.6.0"/>
+    <PackageReference Include="HotChocolate.Types" Version="16.7.5"/>
   </ItemGroup>
 
   <ItemGroup>
